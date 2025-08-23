@@ -1,0 +1,34 @@
+name: pelican-build
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: "0 5 * * *"   # daily at 05:00 UTC (~07:00 Berlin in summer)
+  workflow_dispatch:
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Generate today's post (MVP)
+        run: python scripts/run_pipeline.py
+
+      - name: Build Pelican (publish)
+        run: pelican content -s publishconf.py -o output
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output
