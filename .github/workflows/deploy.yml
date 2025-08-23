@@ -1,4 +1,7 @@
-name: pelican-build
+- name: Build site with Pelican
+  run: |
+    export PYTHONPATH="$GITHUB_WORKSPACE"
+    pelican content -s publishconf.py -o output
 
 on:
   push:
