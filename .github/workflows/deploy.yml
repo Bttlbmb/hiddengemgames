@@ -1,13 +1,10 @@
-- name: Build site with Pelican
-  run: |
-    export PYTHONPATH="$GITHUB_WORKSPACE"
-    pelican content -s publishconf.py -o output
+name: pelican-build
 
 on:
   push:
     branches: [ main ]
   schedule:
-    - cron: "0 5 * * *"     # optional: daily build at 05:00 UTC
+    - cron: "0 5 * * *"     # daily build at 05:00 UTC
   workflow_dispatch:
 
 permissions:
@@ -33,7 +30,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          python -c "import pelican, sys; print('Pelican version:', pelican.__version__)"
+          python -c "import pelican; print('Pelican version:', pelican.__version__)"
 
       - name: Ensure content exists (debug)
         run: |
@@ -41,7 +38,9 @@ jobs:
           ls -la content || true
 
       - name: Build site with Pelican
-        run: pelican content -s publishconf.py -o output
+        run: |
+          export PYTHONPATH="$GITHUB_WORKSPACE"
+          pelican content -s publishconf.py -o output
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
