@@ -1,1 +1,35 @@
+<!doctype html>
+<html lang="{{ DEFAULT_LANG or 'en' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if title %}{{ title }} — {% endif %}{{ SITENAME }}</title>
+  <link rel="stylesheet" href="{{ SITEURL }}/theme/hgg.css">
+  <link rel="alternate" type="application/atom+xml" title="{{ SITENAME }} Atom" href="{{ SITEURL }}/feeds/all.atom.xml">
+</head>
+<body>
+  <header class="hgg-header">
+    <div class="hgg-wrap hgg-header__inner">
+      <a class="brand" href="{{ SITEURL or '/' }}">{{ SITENAME }}</a>
+      <nav class="nav">
+        {% for text, url in MENUITEMS %}
+          <a href="{{ SITEURL }}{{ url }}">{{ text }}</a>
+        {% endfor %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="hgg-main">
+    <div class="hgg-wrap">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <footer class="hgg-footer">
+    <div class="hgg-wrap">
+      <p>© {{ now().year }} {{ SITENAME }} — Built with Pelican.</p>
+    </div>
+  </footer>
+</body>
+</html>
 
