@@ -40,7 +40,7 @@ jobs:
       - name: Generate hourly post
         run: python scripts/run_pipeline.py
 
-      - name: Debug: list generated posts
+      - name: 'Debug: list generated posts'
         run: |
           echo "Markdown files under content/:"
           find content -maxdepth 3 -type f -name "*.md" -print
