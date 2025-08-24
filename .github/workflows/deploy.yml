@@ -4,11 +4,11 @@ on:
   push:
     branches: [ main ]
   schedule:
-    - cron: "0 * * * *"     # run at the start of every hour (UTC)
+    - cron: "0 * * * *"     # hourly (UTC)
   workflow_dispatch:
 
 permissions:
-  contents: write   # allow committing generated posts back to the repo
+  contents: write
   pages: write
   id-token: write
 
@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0      # needed for rebase before pushing
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -49,23 +49,24 @@ jobs:
           echo "Most recent post preview:"
           head -20 $(ls -t content/posts/*.md | head -1) || true
 
+      # ✅ commit first, then rebase, then push
       - name: Commit & push generated posts (rebase-safe)
         run: |
           set -e
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Stage only generated files (if any)
+          # Stage generated files (if any)
           git add content/posts/*.md || true
 
           # If nothing staged, exit quietly
           if git diff --cached --quiet; then
             echo "No new posts to commit."
           else
-            # Rebase on latest remote to avoid non-fast-forward errors
-            git fetch origin main
-            git pull --rebase origin main
             git commit -m "chore(posts): hourly post [skip ci]"
+            # pull with rebase after committing, so our commit rebases on top
+            git fetch origin main
+            git -c rebase.autoStash=true pull --rebase origin main
             git push origin HEAD:main
           fi
 
