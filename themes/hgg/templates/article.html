@@ -1,1 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+
+<article class="detail">
+  <header class="detail-head">
+    <h1 class="title">{{ article.title }}</h1>
+    <div class="meta">
+      {{ article.date.strftime('%Y-%m-%d %H:%M') }}
+      {% if article.category %} · {{ article.category }}{% endif %}
+      {% if article.tags and article.tags|count > 0 %} · {{ article.tags|join(', ') }}{% endif %}
+    </div>
+  </header>
+
+  {% if article.metadata.cover %}
+    <div class="detail-cover">
+      <img src="{{ article.metadata.cover }}" alt="{{ article.title|striptags }}">
+    </div>
+  {% endif %}
+
+  <div class="detail-content">
+    {{ article.content }}
+  </div>
+</article>
+
+{% endblock %}
 
