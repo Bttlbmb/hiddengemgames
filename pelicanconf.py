@@ -1,3 +1,6 @@
+from datetime import datetime
+CURRENTYEAR = datetime.now().year
+
 AUTHOR = "Max"
 SITENAME = "Hidden Gem Games"
 SITEURL = ""                 # set only in publishconf.py
