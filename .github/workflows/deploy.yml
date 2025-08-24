@@ -4,11 +4,12 @@ on:
   push:
     branches: [ main ]
   schedule:
-    - cron: "0 * * * *"     # run at the start of every hour (UTC)
+    - cron: "0 * * * *"     # hourly (UTC)
   workflow_dispatch:
 
+# need write so we can commit generated posts
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -21,6 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0      # safer for committing
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -46,6 +49,14 @@ jobs:
           find content -maxdepth 3 -type f -name "*.md" -print
           echo "Most recent post preview:"
           head -20 $(ls -t content/posts/*.md | head -1) || true
+
+      # ✅ persist posts so they don't vanish next run
+      - name: Commit new/changed posts
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(posts): hourly post [skip ci]"
+          file_pattern: content/posts/*.md
+          branch: main
 
       - name: Build site with Pelican
         run: |
