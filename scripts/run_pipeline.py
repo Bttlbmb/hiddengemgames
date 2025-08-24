@@ -7,9 +7,9 @@ from zoneinfo import ZoneInfo
 
 import requests
 from random import SystemRandom
-rng = SystemRandom()  # better randomness, no seeding
+rng = SystemRandom()
 
-LOCAL_TZ = ZoneInfo("Europe/Berlin")  # change as you like
+LOCAL_TZ = ZoneInfo("Europe/Berlin")
 POST_DIR = Path("content/posts")
 DATA_DIR = Path("content/data")
 SEEN_PATH = DATA_DIR / "seen.json"
@@ -65,7 +65,6 @@ def save_seen(seen):
 
 
 def pick_game(apps, seen_set, tries=200):
-    """Pick a random game not in the seen set, skipping DLC/coming soon."""
     for _ in range(tries):
         app = rng.choice(apps)
         appid = app.get("appid")
@@ -89,7 +88,6 @@ def main():
     slug_ts = now_local.strftime("%Y-%m-%d-%H%M%S")
     post_path = POST_DIR / f"{slug_ts}-auto.md"
 
-    # Load seen appids
     seen = load_seen()
     seen_set = set(seen)
 
@@ -116,17 +114,15 @@ Could not fetch Steam data this run. Will try again next hour.
         print(f"[ok] wrote fallback {post_path}")
         return
 
-    # Get review summary (non-fatal)
     summary = {}
     try:
         summary = get_review_summary(appid)
     except Exception as e:
         print(f"[warn] review summary failed for {appid}: {e}")
 
-    # Build article
     name = data.get("name", f"App {appid}")
     short = clean_text(data.get("short_description", ""))
-    header = data.get("header_image", "")
+    header = data.get("header_image", "")   # 👈 Steam header image
     link = f"https://store.steampowered.com/app/{appid}/"
     release = (data.get("release_date") or {}).get("date", "—")
     genres = ", ".join([g.get("description") for g in (data.get("genres") or [])][:5]) or "—"
@@ -138,11 +134,13 @@ Could not fetch Steam data this run. Will try again next hour.
     total = summary.get("total_reviews")
     review_line = f"Reviews: **{desc}** ({total:,} total)" if (desc and total) else (f"Reviews: **{desc}**" if desc else "Reviews: —")
 
+    # ✅ Added `Cover:` metadata line
     md = f"""Title: Hourly Game — {now_local.strftime('%Y-%m-%d %H:%M:%S %Z')}
 Date: {now_local.strftime('%Y-%m-%d %H:%M')}
 Category: Games
 Tags: auto, steam
 Slug: game-{slug_ts}
+Cover: {header}
 
 ![{name}]({header})
 
@@ -162,7 +160,6 @@ Slug: game-{slug_ts}
     post_path.write_text(md, encoding="utf-8")
     print(f"[ok] wrote {post_path} for {appid} — {name!r}")
 
-    # Update seen list and save
     seen.append(appid)
     save_seen(seen)
 
