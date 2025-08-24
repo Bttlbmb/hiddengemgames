@@ -1,1 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="hero">
+  {% if articles and articles|count > 0 %}
+    {% set hero = articles[0] %}
+    <div class="hero-card">
+      <div class="hero-media">
+        {% if hero.metadata.cover %}
+          <img src="{{ hero.metadata.cover }}" alt="{{ hero.title|striptags }}">
+        {% else %}
+          <img src="https://placehold.co/1200x630?text=Hidden+Gem+Games" alt="">
+        {% endif %}
+      </div>
+      <div class="hero-body">
+        <div class="kicker">Today’s Game</div>
+        <h1 class="title"><a href="{{ SITEURL }}/{{ hero.url }}">{{ hero.title }}</a></h1>
+        <div class="meta">
+          {{ hero.date.strftime('%Y-%m-%d %H:%M') }}
+          {% if hero.category %} · {{ hero.category }}{% endif %}
+          {% if hero.tags and hero.tags|count > 0 %} · {{ hero.tags[0].name }}{% endif %}
+        </div>
+        <p class="excerpt">{{ hero.summary if hero.summary else hero.content|striptags|truncate(220) }}</p>
+        <a class="btn" href="{{ SITEURL }}/{{ hero.url }}">Read the pick →</a>
+      </div>
+    </div>
+  {% else %}
+    <p>No articles yet.</p>
+  {% endif %}
+</section>
+
+{% if articles and articles|count > 1 %}
+  <h2 class="section-title">Recent picks</h2>
+  <div class="grid">
+    {% for a in articles[1:10] %}
+      <article class="card">
+        {% if a.metadata.cover %}<img src="{{ a.metadata.cover }}" alt="{{ a.title|striptags }}">{% endif %}
+        <div class="card-body">
+          <h3><a href="{{ SITEURL }}/{{ a.url }}">{{ a.title }}</a></h3>
+          <div class="meta">{{ a.date.strftime('%Y-%m-%d %H:%M') }}</div>
+          <p class="excerpt">{{ a.summary if a.summary else a.content|striptags|truncate(110) }}</p>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% endblock %}
 
