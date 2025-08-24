@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
   schedule:
-    - cron: "0 * * * *"     # hourly
+    - cron: "0 * * * *"     # run at the start of every hour (UTC)
   workflow_dispatch:
 
 permissions:
@@ -36,6 +36,16 @@ jobs:
         run: |
           ls -la
           ls -la content || true
+
+      - name: Generate hourly post
+        run: python scripts/run_pipeline.py
+
+      - name: Debug: list generated posts
+        run: |
+          echo "Markdown files under content/:"
+          find content -maxdepth 3 -type f -name "*.md" -print
+          echo "Most recent post preview:"
+          head -20 $(ls -t content/posts/*.md | head -1) || true
 
       - name: Build site with Pelican
         run: |
