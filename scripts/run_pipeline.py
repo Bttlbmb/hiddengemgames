@@ -1,22 +1,39 @@
 #!/usr/bin/env python3
-import os, datetime, pathlib
+import datetime as dt
+from zoneinfo import ZoneInfo
+from pathlib import Path
+import textwrap
 
-TODAY = datetime.date.today().isoformat()
-content_dir = pathlib.Path("content/posts")
-content_dir.mkdir(parents=True, exist_ok=True)
+# --- settings ---
+LOCAL_TZ = ZoneInfo("Europe/Berlin")   # change if you prefer a different display timezone
+POST_DIR = Path("content/posts")
+POST_DIR.mkdir(parents=True, exist_ok=True)
 
-md_path = content_dir / f"{TODAY}-daily.md"
-if md_path.exists():
-    print("Post already exists for today, skipping.")
+# --- time stamps ---
+now_utc = dt.datetime.now(dt.timezone.utc)
+now_local = now_utc.astimezone(LOCAL_TZ)
+
+# Filename unique per hour (prevents duplicates on reruns)
+slug_ts = now_local.strftime("%Y-%m-%d-%H00")
+fname = POST_DIR / f"{slug_ts}-hourly.md"
+
+if fname.exists():
+    print(f"[info] Post already exists for this hour: {fname}")
 else:
-    md = f"""Title: Today’s Hidden Gems (MVP)
-Date: {TODAY}
-Category: Daily
+    # Pelican parses "Date:"; include offset so it displays correctly
+    date_meta = now_local.isoformat(timespec="minutes")
+    human_time = now_local.strftime("%Y-%m-%d %H:%M %Z")
 
-This is the minimal MVP post generated automatically.
+    body = textwrap.dedent(f"""\
+    Title: Hourly Update — {human_time}
+    Date: {date_meta}
+    Category: Updates
+    Tags: hourly, auto
+    Slug: {slug_ts}
 
-- **Game Gem (placeholder):** Try something small and cozy you’ve never heard of.
-- **Book Gem (placeholder):** Pick a short backlist novel that’s < 300 pages.
-"""
-    md_path.write_text(md, encoding="utf-8")
-    print(f"Wrote {md_path}")
+    This is an automated hourly post generated at **{human_time}**.
+    Replace this text later with your gems picker output.
+    """)
+
+    fname.write_text(body, encoding="utf-8")
+    print(f"[ok] Wrote {fname}")
