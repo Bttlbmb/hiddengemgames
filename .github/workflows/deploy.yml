@@ -4,12 +4,11 @@ on:
   push:
     branches: [ main ]
   schedule:
-    - cron: "0 * * * *"     # hourly (UTC)
+    - cron: "0 * * * *"     # run at the start of every hour (UTC)
   workflow_dispatch:
 
-# need write so we can commit generated posts
 permissions:
-  contents: write
+  contents: write   # allow committing generated posts back to the repo
   pages: write
   id-token: write
 
@@ -23,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0      # safer for committing
+          fetch-depth: 0      # needed for rebase before pushing
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -50,13 +49,25 @@ jobs:
           echo "Most recent post preview:"
           head -20 $(ls -t content/posts/*.md | head -1) || true
 
-      # ✅ persist posts so they don't vanish next run
-      - name: Commit new/changed posts
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "chore(posts): hourly post [skip ci]"
-          file_pattern: content/posts/*.md
-          branch: main
+      - name: Commit & push generated posts (rebase-safe)
+        run: |
+          set -e
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Stage only generated files (if any)
+          git add content/posts/*.md || true
+
+          # If nothing staged, exit quietly
+          if git diff --cached --quiet; then
+            echo "No new posts to commit."
+          else
+            # Rebase on latest remote to avoid non-fast-forward errors
+            git fetch origin main
+            git pull --rebase origin main
+            git commit -m "chore(posts): hourly post [skip ci]"
+            git push origin HEAD:main
+          fi
 
       - name: Build site with Pelican
         run: |
