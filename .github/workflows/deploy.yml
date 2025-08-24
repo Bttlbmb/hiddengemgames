@@ -46,8 +46,8 @@ jobs:
         run: |
           echo "Markdown files under content/:"
           find content -maxdepth 3 -type f -name "*.md" -print
-          echo "Most recent post preview:"
-          head -20 $(ls -t content/posts/*.md | head -1) || true
+          echo "Seen list (if any):"
+          test -f content/data/seen.json && tail -n +1 content/data/seen.json || echo "no seen.json yet"
 
       # ✅ commit first, then rebase, then push
       - name: Commit & push generated posts (rebase-safe)
@@ -56,15 +56,16 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Stage generated files (if any)
+          # Stage generated files and seen list (if present)
           git add content/posts/*.md || true
+          git add content/data/seen.json || true
 
           # If nothing staged, exit quietly
           if git diff --cached --quiet; then
-            echo "No new posts to commit."
+            echo "No new files to commit."
           else
-            git commit -m "chore(posts): hourly post [skip ci]"
-            # pull with rebase after committing, so our commit rebases on top
+            git commit -m "chore(posts): hourly post + seen list [skip ci]"
+            # Rebase on latest remote, then push
             git fetch origin main
             git -c rebase.autoStash=true pull --rebase origin main
             git push origin HEAD:main
