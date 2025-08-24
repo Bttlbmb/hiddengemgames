@@ -11,4 +11,4 @@ THEME = "notmyidea"          # built-in, simple
 
 DEFAULT_PAGINATION = 10
 
-THEME_TEMPLATES_OVERRIDES = ['templates']
+THEME = "themes/hgg"
