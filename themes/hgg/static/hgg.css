@@ -99,3 +99,24 @@ a:hover{text-decoration:underline}
   .today{ padding:18px 14px; }
   .today-body img{ max-width:100%; }  /* let image fit small screens */
 }
+
+/* Intro block */
+.site-intro{
+  max-width:720px;
+  margin:0 auto 26px auto;
+  padding:14px 18px;
+  background:var(--card);
+  border-radius:12px;
+  box-shadow:0 4px 14px rgba(0,0,0,.05);
+  text-align:center;
+}
+.site-intro p{
+  margin:0;
+  font-size:1rem;
+  color:var(--muted);
+  line-height:1.5;
+}
+.site-intro strong{
+  color:var(--ink);
+}
+
