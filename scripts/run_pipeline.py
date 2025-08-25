@@ -434,6 +434,7 @@ Category: Games
 Tags: auto, steam
 Slug: {appid}-{slug_ts}
 Cover: {header}
+Steam: https://store.steampowered.com/app/{appid}/
 {"Why: " + why if why else ""}
 {"Likes: " + likes if likes else ""}
 
