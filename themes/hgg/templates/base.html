@@ -4,28 +4,38 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>{% if title %}{{ title }} — {% endif %}{{ SITENAME }}</title>
+
+  <!-- Theme CSS (project + local dev safe) -->
   <link rel="stylesheet" href="{{ SITEURL }}/theme/hgg.css?v={{ CURRENTYEAR }}">
 </head>
 <body>
+
+  <!-- Header -->
   <header class="site-header">
     <div class="wrap header-inner">
       <a class="brand" href="{{ SITEURL or '/' }}">{{ SITENAME }}</a>
-      <nav class="nav">
+
+      {% if MENUITEMS %}
+      <nav class="nav" aria-label="Primary">
         {% for text, url in MENUITEMS %}
           <a href="{{ SITEURL }}{{ url }}">{{ text }}</a>
         {% endfor %}
       </nav>
+      {% endif %}
     </div>
   </header>
 
+  <!-- Main content -->
   <main class="wrap main">
     {% block content %}{% endblock %}
   </main>
 
+  <!-- Footer -->
   <footer class="site-footer">
-    <div class="wrap small muted">
-      <span>© {{ (CURRENTYEAR if CURRENTYEAR is defined else 2025) }} {{ SITENAME }}</span>
+    <div class="wrap">
+      <p class="small muted">© {{ (CURRENTYEAR if CURRENTYEAR is defined else 2025) }} {{ SITENAME }}</p>
     </div>
   </footer>
+
 </body>
 </html>
