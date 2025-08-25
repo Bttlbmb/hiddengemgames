@@ -1,9 +1,9 @@
 :root{
-  --ink:#1f2937;    /* slate text */
-  --muted:#6b7280;  /* neutral grey */
-  --bg:#f7f2ea;     /* warm paper */
-  --card:#ffffff;   /* bright white cards */
-  --accent:#f97316; /* coral/orange */
+  --ink:#e6f1ff;      /* soft light text */
+  --muted:#94a3b8;    /* muted blue-gray */
+  --bg:#0b0e13;       /* deep near-black background */
+  --card:#11161e;     /* slightly lighter card panels */
+  --accent:#34d399;   /* emerald glow */
 }
 
 *{box-sizing:border-box}
