@@ -20,7 +20,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-        HF_API_TOKEN: ${{ secrets.HF_API_TOKEN }}
+      HF_API_TOKEN: ${{ secrets.HF_API_TOKEN }}   # add this secret in repo settings
+      HF_MODEL: facebook/bart-large-cnn           # optional; can omit (this is the default)
+
     steps:
       - uses: actions/checkout@v4
         with:
