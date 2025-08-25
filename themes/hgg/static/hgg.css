@@ -1,157 +1,143 @@
-/* ===========================
-   Hidden Gem Games – hgg.css
-   =========================== */
+/* ===============================
+   Hidden Gem Games Theme Styles
+   =============================== */
 
-/* ---------- Theme (premium dark) ---------- */
-:root{
-  /* Colors */
-  --bg:#0b0e13;        /* page background (near-black) */
-  --card:#11161e;      /* card background */
-  --ink:#e6f1ff;       /* main text */
-  --muted:#9fb0c7;     /* secondary text */
-  --accent:#10b981;    /* emerald accent */
-
-  /* Layout */
-  --content-width: 820px;  /* shared max width for header/main/footer */
-  --radius: 14px;
-  --shadow: 0 6px 20px rgba(0,0,0,.18);
+/* Base layout */
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #0b0e13;
+  color: #e9f1ff;
 }
 
-/* ---------- Base ---------- */
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--ink);
-  font: 400 16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-}
-a{color:inherit}
-a:hover{color:var(--ink)}
-
-/* Centering helper used by header, main, footer */
-.wrap{
-  max-width: var(--content-width);
+.wrap {
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 1rem;
 }
 
-/* ---------- Header / Nav ---------- */
-.site-header{
-  position: sticky; top:0; z-index:50;
-  background:var(--bg);
-  border-bottom:1px solid rgba(255,255,255,.04);
-}
-.header-inner{
-  height:64px;
-  display:flex; align-items:center; justify-content:space-between;
-  gap:16px;
-}
-.brand{
-  text-decoration:none;
-  font-weight:800;
-  letter-spacing:.2px;
-  font-size:1.125rem;
-  color:var(--ink);
-}
-.nav{display:flex; align-items:center; gap:18px;}
-.nav a{
-  text-decoration:none;
-  color:var(--muted);
-  font-weight:600;
-  font-size:.95rem;
-  padding:6px 2px;
-  border-radius:8px;
-  opacity:.95;
-}
-.nav a:hover{
-  color:var(--ink);
-  text-decoration:underline;
-  text-underline-offset:3px;
+.site-header,
+.site-footer {
+  background: #11161e;
+  padding: 1rem 0;
 }
 
-/* ---------- Footer ---------- */
-.site-footer{padding:28px 0 40px; color:var(--muted);}
-.footer-inner{display:flex; align-items:center; justify-content:center; text-align:center;}
-.small{font-size:.95rem}
-.muted{color:var(--muted)}
-
-/* ---------- Intro card ---------- */
-.site-intro{
-  max-width:var(--content-width);
-  margin:20px auto;
-  padding:14px 18px;
-  background:var(--card);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  text-align:center;
-}
-.site-intro p{margin:0; color:var(--muted)}
-.site-intro strong{color:var(--ink)}
-
-/* ---------- Today card ---------- */
-.today{
-  max-width:var(--content-width);
-  margin:20px auto;
-  background:var(--card);
-  border-radius:var(--radius);
-  padding:24px 22px;
-  box-shadow:var(--shadow);
-}
-.today-kicker{
-  text-align:center;
-  font-size:.9rem;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  color:var(--accent);
-  margin:4px 0 10px;
-}
-.today-title{
-  text-align:center;
-  font-weight:800;
-  font-size:clamp(1.6rem,3.6vw,2.4rem);
-  margin:6px 0 16px;
+.site-header .brand {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #6ae1b7;
+  text-decoration: none;
 }
 
-/* Markdown/body content inside today card */
-.today-body{color:var(--ink)}
-.today-body p{margin:0 0 14px}
-.today-body h3{
-  margin:18px 0 10px;
-  font-size:1.05rem;
-  color:var(--ink);
+.site-header .nav a {
+  margin-left: 1rem;
+  text-decoration: none;
+  color: #9fb0c7;
 }
-.today-body ul{
-  margin:12px 0 18px 1.25rem;
-  padding:0;
-}
-.today-body li{margin:6px 0}
-
-/* Steam header image */
-.today-body img{
-  display:block;
-  max-width:100%;
-  width:560px;          /* typical Steam header width */
-  height:auto;
-  margin:0 auto 14px;
-  border-radius:12px;
-  box-shadow:0 8px 18px rgba(0,0,0,.28);
+.site-header .nav a:hover {
+  color: #6ae1b7;
 }
 
-/* Links in body */
-.today-body a{color:var(--ink); text-decoration:underline;}
-.today-body a:hover{opacity:.9}
+.main {
+  margin: 2rem 0;
+}
 
-/* ---------- Utilities ---------- */
-.center{text-align:center}
-.hr{height:1px; background:rgba(255,255,255,.06); border:0; margin:16px 0}
+.site-footer .small {
+  font-size: 0.85rem;
+  color: #9fb0c7;
+}
 
-/* ---------- Responsive ---------- */
-@media (max-width: 640px){
-  .header-inner{flex-wrap:wrap; height:auto; padding:10px 0}
-  .nav{width:100%; justify-content:flex-start; gap:14px}
-  .today, .site-intro{padding:18px 14px}
-  .today-body img{width:100%}
+/* Hero section */
+.today {
+  background: linear-gradient(135deg, #11161e, #0e1420);
+  border-radius: 18px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+.today-kicker {
+  font-size: 0.9rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6ae1b7;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.today-title {
+  font-size: clamp(1.8rem, 2.6vw, 2.3rem);
+  margin: 0 0 1rem 0;
+  line-height: 1.15;
+}
+.today-body {
+  color: #cfe0ff;
+  line-height: 1.5;
+}
+
+/* Article detail */
+.detail {
+  background: #11161e;
+  border-radius: 18px;
+  padding: 2rem;
+  box-shadow: 0 8px 25px rgba(0,0,0,.25);
+}
+.detail-head .title {
+  margin: 0 0 0.5rem 0;
+}
+.detail-cover img {
+  max-width: 100%;
+  border-radius: 14px;
+  margin: 1rem 0;
+}
+
+/* Cards for recent picks (if used in index.html from root) */
+.hgg-card {
+  background: #11161e;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.hgg-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(0,0,0,.25);
+}
+.hgg-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+}
+.hgg-card-body {
+  padding: 0.9rem;
+}
+.hgg-card h3 {
+  font-size: 1rem;
+  margin: .2rem 0 .35rem 0;
+  color: #e9f1ff;
+}
+.hgg-card .meta {
+  font-size: .85rem;
+  color: #9fb0c7;
+  margin-bottom: .35rem;
+}
+.hgg-card .excerpt {
+  color: #cfe0ff;
+  opacity: .9;
+  font-size: .92rem;
+}
+
+/* ===============================
+   New: Steam button
+   =============================== */
+.hgg-btn {
+  display: inline-block;
+  padding: 0.65rem 1rem;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #6ae1b7, #8aa7ff);
+  color: #08111d;
+  text-decoration: none;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(0,0,0,.25);
+  transition: filter 0.2s ease;
+}
+.hgg-btn:hover {
+  filter: brightness(1.05);
 }
