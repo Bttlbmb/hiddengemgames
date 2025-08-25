@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os
 import datetime as dt
 import json
 import re
@@ -49,7 +50,7 @@ JOKE_KEYWORDS = {"meme","joke","satire","parody","troll"}
 NAME_BLOCKLIST = {"hentai","sex","nude","adult","nsfw","porn","strip","ecchi","erotic","boobs","yaoi","yuri","ahega","ahegal"}
 
 # Hugging Face API (for summaries)
-HF_TOKEN = os.environ.get("HF_API_TOKEN")
+HF_TOKEN = os.getenv("HF_API_TOKEN")
 HF_API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-small"
 HF_HEADERS = {"Authorization": f"Bearer {HF_TOKEN}"} if HF_TOKEN else {}
 
@@ -145,6 +146,9 @@ def fetch_review_texts(appid: int, num=40):
 
 # ---------- Summarizer ----------
 def hf_generate(prompt: str, max_new_tokens=160, temperature=0.2):
+    # If no token available (e.g., local run), just return empty string
+    if not HF_TOKEN:
+        return ""
     payload = {
         "inputs": prompt,
         "parameters": {"max_new_tokens": max_new_tokens, "temperature": temperature}
@@ -168,6 +172,10 @@ def chunk_texts(texts, max_chars=1800):
     return chunks
 
 def get_or_make_summary(appid: int):
+    # If no token, skip LLM summaries entirely
+    if not HF_TOKEN:
+        return {"why": [], "likes": []}
+
     p = SUM_CACHE / f"{appid}.json"
     if p.exists():
         try:
