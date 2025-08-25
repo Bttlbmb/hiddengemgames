@@ -22,7 +22,7 @@ LOCAL_TZ  = ZoneInfo("Europe/Berlin")
 POST_DIR  = Path("content/posts")
 DATA_DIR  = Path("content/data")
 SEEN_PATH = DATA_DIR / "seen.json"
-SUM_CACHE = DATA_DIR / "summaries"  # caches for likes/dislikes/overview
+SUM_CACHE = DATA_DIR / "summaries"  # caches for overview/likes/dislikes/hidden_gem
 
 for p in (POST_DIR, DATA_DIR, SUM_CACHE):
     p.mkdir(parents=True, exist_ok=True)
@@ -53,7 +53,7 @@ def clean_text(s: str, max_len=240) -> str:
     s = re.sub(r"\s+", " ", (s or "")).strip()
     return s[: max_len - 1] + "…" if len(s) > max_len else s
 
-def clamp_chars(s: str, max_len=550) -> str:
+def clamp_chars(s: str, max_len=650) -> str:
     s = re.sub(r"\s+", " ", (s or "")).strip()
     return s[: max_len].rstrip()
 
@@ -166,15 +166,8 @@ def is_allowed(data: dict) -> bool:
     if any(t in nm for t in ("demo", "soundtrack", "dlc", "server", "ost")):
         return False
 
-    try:
-        summary = get_review_summary(data["steam_appid"])
-        total_reviews = summary.get("total_reviews", 0)
-        if total_reviews < 50:   # 👈 enforce minimum
-            return False
-    except Exception:
-        return False
-
     return True
+
 
 def pick_game(apps, seen_set, tries=200):
     for _ in range(tries):
@@ -198,7 +191,7 @@ CF_ACCOUNT_ID = os.getenv("CF_ACCOUNT_ID")
 CF_API_TOKEN  = os.getenv("CF_API_TOKEN")
 CF_MODEL = "@cf/meta/llama-3-8b-instruct"   # good balance for short outputs
 
-def cf_generate(prompt: str, max_tokens: int = 320) -> str:
+def cf_generate(prompt: str, max_tokens: int = 360) -> str:
     """Call Cloudflare Workers AI chat API and return raw text. '' on failure."""
     if not (CF_ACCOUNT_ID and CF_API_TOKEN and prompt.strip()):
         return ""
@@ -295,7 +288,7 @@ def reviews_to_paragraph(reviews: list[str], want=3) -> Optional[str]:
     if not picks:
         return None
     para = " ".join(picks)
-    return clamp_chars(para, 550)
+    return clamp_chars(para, 650)
 
 # Slight de-marketing pass on Steam short description
 MARKETING_PAT = re.compile(
@@ -312,79 +305,6 @@ def demarket(s: str) -> str:
 # =========================
 # Paragraph builders (CF → local → metadata) + caching
 # =========================
-def get_summary_paragraph(appid: int, name: str, reviews: list[str], short_desc: str,
-                          review_desc: Optional[str], total_reviews: Optional[int],
-                          mode: str = "likes") -> str:
-    """
-    mode = "likes" → what players enjoy (2–3 sentences, descriptive)
-    mode = "dislikes" → what players don't like (2–3 sentences, descriptive)
-    """
-    cache_path = SUM_CACHE / f"{appid}_{mode}.txt"
-    if cache_path.exists():
-        try:
-            text = cache_path.read_text(encoding="utf-8").strip()
-            if text:
-                return text
-        except Exception:
-            pass
-
-    # --- Cloudflare LLM first ---
-    if reviews and CF_ACCOUNT_ID and CF_API_TOKEN:
-        sample = "\n\n".join(reviews[:20])
-        if mode == "likes":
-            prompt = (
-                f"You are summarizing Steam user reviews for the game {name}.\n"
-                "Write 2–3 sentences describing what is praised about the game.\n"
-                "Use a direct, factual tone (e.g. 'Combat feels satisfying', 'Levels are well designed').\n"
-                "Do NOT hedge with 'players say' or 'some think'. Only describe directly.\n"
-                f"REVIEWS SAMPLE:\n{sample}"
-            )
-        else:
-            prompt = (
-                f"You are summarizing Steam user reviews for the game {name}.\n"
-                "Write 2–3 sentences describing what is criticized about the game.\n"
-                "Use a direct, factual tone (e.g. 'Controls are clunky', 'Performance is unstable').\n"
-                "Do NOT hedge with 'players say' or 'some think'. Only describe directly.\n"
-                f"REVIEWS SAMPLE:\n{sample}"
-            )
-        raw = cf_generate(prompt)
-        if raw:
-            text = clamp_chars(raw, 550)
-            try: cache_path.write_text(text, encoding="utf-8")
-            except Exception: pass
-            print(f"[{mode}] CF descriptive paragraph used for {appid}")
-            return text
-
-    # --- Local extractive fallback ---
-    if reviews:
-        local = reviews_to_paragraph(reviews, want=3)
-        if local:
-            # Strip hedging phrases if present
-            text = re.sub(r"\b(some|many|players|people)\s+(say|think|mention|report|find)\b.*?", "", local, flags=re.I)
-            text = clamp_chars(text, 550)
-            try: cache_path.write_text(text, encoding="utf-8")
-            except Exception: pass
-            print(f"[{mode}] local descriptive paragraph used for {appid}")
-            return text
-
-    # --- Metadata fallback ---
-    if mode == "likes":
-        bits = []
-        if review_desc:
-            bits.append(f"Overall sentiment is {review_desc.lower()}.")
-        if short_desc:
-            bits.append(clean_text(demarket(short_desc), max_len=320))
-        if total_reviews:
-            bits.append(f"Based on {total_reviews:,} reviews.")
-        text = " ".join(bits) or "Praised aspects not available."
-    else:
-        text = "Criticized aspects not available."
-    try: cache_path.write_text(text, encoding="utf-8")
-    except Exception: pass
-    print(f"[{mode}] metadata fallback for {appid}")
-    return text
-
-
 def get_overview_paragraph(appid: int, name: str, short_desc: str, reviews: list[str]) -> str:
     """
     Neutral, non-marketing overview in 2–4 sentences.
@@ -405,8 +325,8 @@ def get_overview_paragraph(appid: int, name: str, short_desc: str, reviews: list
     # 1) Cloudflare
     if CF_ACCOUNT_ID and CF_API_TOKEN and (base or sample):
         prompt = (
-            "Write a neutral, non-marketing overview of this PC game in 2–4 sentences.\n"
-            "Avoid hype words and sales language. Describe the core premise, mechanics, and tone succinctly.\n"
+            "Write a neutral, non-marketing overview of this PC game in 2–4 sentences. "
+            "Avoid hype and sales language. Describe the core premise, mechanics, and tone succinctly.\n"
             f"STEAM SHORT DESCRIPTION:\n{base}\n\n"
             f"REVIEWS SAMPLE:\n{sample}"
         )
@@ -433,6 +353,147 @@ def get_overview_paragraph(appid: int, name: str, short_desc: str, reviews: list
     try: cache_path.write_text(text, encoding="utf-8")
     except Exception: pass
     print(f"[overview] local/metadata paragraph used for {appid}")
+    return text
+
+
+def get_summary_paragraph(appid: int, name: str, reviews: list[str], short_desc: str,
+                          review_desc: Optional[str], total_reviews: Optional[int],
+                          mode: str = "likes") -> str:
+    """
+    mode = "likes" → what players enjoy (2–3 sentences, descriptive)
+    mode = "dislikes" → what players don't like (2–3 sentences, descriptive)
+    """
+    cache_path = SUM_CACHE / f"{appid}_{mode}.txt"
+    if cache_path.exists():
+        try:
+            text = cache_path.read_text(encoding="utf-8").strip()
+            if text:
+                return text
+        except Exception:
+            pass
+
+    # 1) Cloudflare (descriptive, no hedging)
+    if reviews and CF_ACCOUNT_ID and CF_API_TOKEN:
+        sample = "\n\n".join(reviews[:20])
+        if mode == "likes":
+            prompt = (
+                f"You are summarizing Steam user reviews for the game {name}.\n"
+                "Write 2–3 sentences describing what is praised about the game.\n"
+                "Use a direct, factual tone (e.g. 'Combat feels satisfying', 'Levels are well designed'). "
+                "Do NOT hedge with 'players say' or 'some think'.\n"
+                f"REVIEWS SAMPLE:\n{sample}"
+            )
+        else:
+            prompt = (
+                f"You are summarizing Steam user reviews for the game {name}.\n"
+                "Write 2–3 sentences describing what is criticized about the game.\n"
+                "Use a direct, factual tone (e.g. 'Controls are clunky', 'Performance is unstable'). "
+                "Do NOT hedge with 'players say' or 'some think'.\n"
+                f"REVIEWS SAMPLE:\n{sample}"
+            )
+        raw = cf_generate(prompt)
+        if raw:
+            text = clamp_chars(raw, 550)
+            try: cache_path.write_text(text, encoding="utf-8")
+            except Exception: pass
+            print(f"[{mode}] CF descriptive paragraph used for {appid}")
+            return text
+
+    # 2) Local extractive fallback
+    if reviews:
+        local = reviews_to_paragraph(reviews, want=3)
+        if local:
+            # Remove common hedging phrases if any slipped in
+            text = re.sub(r"\b(some|many)\s+(players|people)\s+(say|think|mention|report|find)\b.*?", "", local, flags=re.I)
+            text = clamp_chars(text, 550)
+            try: cache_path.write_text(text, encoding="utf-8")
+            except Exception: pass
+            print(f"[{mode}] local descriptive paragraph used for {appid}")
+            return text
+
+    # 3) Metadata fallback
+    if mode == "likes":
+        bits = []
+        if review_desc:
+            bits.append(f"Overall sentiment is {review_desc.lower()}.")
+        if short_desc:
+            bits.append(clean_text(demarket(short_desc), max_len=320))
+        if total_reviews:
+            bits.append(f"Based on {total_reviews:,} reviews.")
+        text = " ".join(bits) or "Praised aspects not available."
+    else:
+        text = "Criticized aspects not available."
+    try: cache_path.write_text(text, encoding="utf-8")
+    except Exception: pass
+    print(f"[{mode}] metadata fallback for {appid}")
+    return text
+
+
+def get_hidden_gem_paragraph(appid: int, name: str, reviews: list[str],
+                             review_desc: Optional[str], total_reviews: Optional[int]) -> str:
+    """
+    1–2 sentences explaining why it qualifies as a hidden gem.
+    Prefers uniqueness/underrated angles; direct, non-marketing tone.
+    """
+    cache_path = SUM_CACHE / f"{appid}_hidden_gem.txt"
+    if cache_path.exists():
+        try:
+            t = cache_path.read_text(encoding="utf-8").strip()
+            if t:
+                return t
+        except Exception:
+            pass
+
+    # 1) Cloudflare prompt
+    if reviews and CF_ACCOUNT_ID and CF_API_TOKEN:
+        sample = "\n\n".join(reviews[:20])
+        # Provide light signals about "underrated"
+        signals = []
+        if total_reviews is not None:
+            signals.append(f"total_reviews={total_reviews}")
+        if review_desc:
+            signals.append(f"review_score={review_desc}")
+        sig = ", ".join(signals) if signals else "n/a"
+        prompt = (
+            f"Based on these Steam reviews, write 1–2 sentences explaining why {name} "
+            "can be considered a hidden gem. Highlight uniqueness, craft, or depth despite limited attention. "
+            "Use a direct, matter-of-fact tone without hype or hedging.\n"
+            f"Signals: {sig}\n"
+            f"REVIEWS SAMPLE:\n{sample}"
+        )
+        raw = cf_generate(prompt, max_tokens=220)
+        if raw:
+            text = clamp_chars(raw, 320)
+            try: cache_path.write_text(text, encoding="utf-8")
+            except Exception: pass
+            print(f"[hidden_gem] CF paragraph used for {appid}")
+            return text
+
+    # 2) Heuristic fallback
+    # Look for keywords in reviews that imply "underrated" angles
+    kw = re.compile(r"\b(hidden gem|underrated|overlooked|sleeper|surprised me|better than it looks)\b", re.I)
+    hits = []
+    for rv in reviews or []:
+        m = kw.search(rv or "")
+        if m:
+            sents = _sentences(rv)
+            if sents:
+                hits.append(sents[0])
+            if len(hits) >= 2:
+                break
+
+    parts = []
+    if total_reviews is not None and review_desc and total_reviews < 500 and "Positive" in review_desc:
+        parts.append(f"Strong {review_desc.lower()} reception despite a relatively small player base.")
+    if hits:
+        parts.append(clamp_chars(" ".join(hits[:1]), 200))
+    if not parts and review_desc:
+        parts.append(f"Its {review_desc.lower()} reviews suggest quality that hasn’t reached a wide audience.")
+    text = clamp_chars(" ".join(parts) or "Well-regarded qualities with limited visibility make it easy to miss.", 320)
+
+    try: cache_path.write_text(text, encoding="utf-8")
+    except Exception: pass
+    print(f"[hidden_gem] heuristic/metadata paragraph used for {appid}")
     return text
 
 
@@ -470,7 +531,7 @@ Could not fetch Steam data this run. Will try again next hour.
         print(f"[ok] wrote fallback {post_path}")
         return
 
-    # Steam review summary (for the little “Reviews: …” line)
+    # Steam review summary (for the “Reviews: …” line)
     try:
         qsum = get_review_summary(appid)
     except Exception as e:
@@ -490,6 +551,7 @@ Could not fetch Steam data this run. Will try again next hour.
     desc  = qsum.get("review_score_desc")
     total = qsum.get("total_reviews")
 
+    # Reviews line
     if desc and (total is not None):
         reviews_line = f"- Reviews: **{desc}** ({total:,} total)"
     elif desc:
@@ -501,9 +563,10 @@ Could not fetch Steam data this run. Will try again next hour.
     reviews = fetch_review_texts(appid, num=40)
 
     # Build paragraphs
-    overview_text  = get_overview_paragraph(appid, name, short, reviews)
-    likes_text     = get_summary_paragraph(appid, name, reviews, short, desc, total, mode="likes")
-    dislikes_text  = get_summary_paragraph(appid, name, reviews, short, desc, total, mode="dislikes")
+    overview_text   = get_overview_paragraph(appid, name, short, reviews)
+    likes_text      = get_summary_paragraph(appid, name, reviews, short, desc, total, mode="likes")
+    dislikes_text   = get_summary_paragraph(appid, name, reviews, short, desc, total, mode="dislikes")
+    hidden_gem_text = get_hidden_gem_paragraph(appid, name, reviews, desc, total)
 
     # Compose the post (Title = game name in your template)
     md = f"""Title: {name}
@@ -526,6 +589,10 @@ Cover: {header}
 ### Overview
 
 {overview_text}
+
+### Why it’s a hidden gem
+
+{hidden_gem_text}
 
 ### What players like
 
