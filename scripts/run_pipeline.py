@@ -221,7 +221,14 @@ def hf_generate(prompt: str, max_new_tokens=200, temperature=0.2) -> str:
         r.raise_for_status()
         out = r.json()
 
-        print("[hf raw]", out)
+        # DEBUG: log model, status, and first ~2KB of raw HF output
+        try:
+            raw_preview = _json.dumps(out) if not isinstance(out, str) else out
+        except Exception:
+            raw_preview = str(out)
+        print(f"[hf debug] model={HF_MODEL} status={r.status_code} len={len(str(raw_preview))}", flush=True)
+        print("[hf raw]", (raw_preview[:2000] + "...") if len(str(raw_preview)) > 2000 else raw_preview, flush=True)
+
         
         if isinstance(out, list) and out and isinstance(out[0], dict):
             return (out[0].get("summary_text") or out[0].get("generated_text") or "").strip()
