@@ -1,47 +1,40 @@
 {% extends "base.html" %}
 {% block content %}
 
-<section class="hero">
-  {% if articles and articles|count > 0 %}
-    {% set hero = articles[0] %}
-    <article class="hero-card">
-      {% if hero.metadata.cover %}
-        <img class="hero-cover" src="{{ hero.metadata.cover }}" alt="{{ hero.title|striptags }}">
-      {% endif %}
+{% if articles and articles|count > 0 %}
+  {% set a = articles[0] %}
 
-      <div class="hero-body">
-        <div class="kicker">Today’s Game</div>
-        <h1 class="title">
-          <a href="{{ SITEURL }}/{{ hero.url }}">{{ hero.title }}</a>
-        </h1>
-        <div class="meta">
-          {{ hero.date.strftime('%Y-%m-%d %H:%M') }}
-          {% if hero.category %} · {{ hero.category }}{% endif %}
-          {% if hero.tags and hero.tags|count > 0 %} · {{ hero.tags[0].name }}{% endif %}
-        </div>
-        <p class="excerpt">{{ hero.summary if hero.summary else hero.content|striptags|truncate(220) }}</p>
-        <a class="btn" href="{{ SITEURL }}/{{ hero.url }}">Read the pick →</a>
-      </div>
-    </article>
-  {% else %}
-    <p>No articles yet.</p>
-  {% endif %}
-</section>
+  <article class="today">
+    <h1 class="today-kicker">Today’s Game</h1>
 
-{% if articles and articles|count > 1 %}
-  <h2 class="section-title">Recent picks</h2>
-  <div class="grid">
-    {% for a in articles[1:10] %}
-      <article class="card">
-        {% if a.metadata.cover %}<img src="{{ a.metadata.cover }}" alt="{{ a.title|striptags }}">{% endif %}
-        <div class="card-body">
-          <h3><a href="{{ SITEURL }}/{{ a.url }}">{{ a.title }}</a></h3>
-          <div class="meta">{{ a.date.strftime('%Y-%m-%d %H:%M') }}</div>
-          <p class="excerpt">{{ a.summary if a.summary else a.content|striptags|truncate(110) }}</p>
-        </div>
-      </article>
-    {% endfor %}
-  </div>
+    {% if a.metadata.cover %}
+      <img class="today-cover" src="{{ a.metadata.cover }}" alt="{{ a.title|striptags }}">
+    {% endif %}
+
+    <h2 class="today-title"><a href="{{ SITEURL }}/{{ a.url }}">{{ a.title }}</a></h2>
+    <div class="today-meta">
+      {{ a.date.strftime('%Y-%m-%d %H:%M') }}
+      {% if a.category %} · {{ a.category }}{% endif %}
+    </div>
+
+    <p class="today-excerpt">
+      {{ a.summary if a.summary else a.content|striptags|truncate(220) }}
+    </p>
+
+    {% if a.metadata.why %}
+      <h3>Why it’s a hidden gem</h3>
+      <p>{{ a.metadata.why }}</p>
+    {% endif %}
+
+    {% if a.metadata.likes %}
+      <h3>What players like</h3>
+      <p>{{ a.metadata.likes }}</p>
+    {% endif %}
+
+    <p><a class="btn" href="{{ SITEURL }}/{{ a.url }}">Open the game pick →</a></p>
+  </article>
+{% else %}
+  <p>No articles yet.</p>
 {% endif %}
 
 {% endblock %}
