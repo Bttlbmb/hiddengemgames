@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 
+<div class="site-intro">
+  <p>
+    <strong>Hidden Gem Games</strong> highlights one lesser-known game each day, 
+    hand-picked at random from the vast Steam catalog.  
+    Our goal: help you discover titles you might otherwise miss.
+  </p>
+</div>
+
+
 {% if articles and articles|count > 0 %}
   {% set a = articles[0] %}
 
