@@ -7,10 +7,6 @@
   <article class="today">
     <h1 class="today-kicker">Today’s Game</h1>
 
-    {% if a.metadata.cover %}
-      <img class="today-cover" src="{{ a.metadata.cover }}" alt="{{ a.title|striptags }}">
-    {% endif %}
-
     <h2 class="today-title"><a href="{{ SITEURL }}/{{ a.url }}">{{ a.title }}</a></h2>
     <div class="today-meta">
       {{ a.date.strftime('%Y-%m-%d %H:%M') }}
