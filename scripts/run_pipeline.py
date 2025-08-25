@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import os
-import datetime as dt
-import json
 import re
+import json
 import time
+import datetime as dt
 from pathlib import Path
 from zoneinfo import ZoneInfo
 from random import SystemRandom
@@ -13,53 +13,43 @@ from typing import Any, Optional
 
 import requests
 
-# --------- Settings ---------
+# =========================
+# Paths & global setup
+# =========================
 LOCAL_TZ = ZoneInfo("Europe/Berlin")
-POST_DIR = Path("content/posts")
-DATA_DIR = Path("content/data")
+POST_DIR  = Path("content/posts")
+DATA_DIR  = Path("content/data")
 CACHE_DIR = DATA_DIR / "cache"
 SUM_CACHE = DATA_DIR / "summaries"
 SEEN_PATH = DATA_DIR / "seen.json"
 
-POST_DIR.mkdir(parents=True, exist_ok=True)
-DATA_DIR.mkdir(parents=True, exist_ok=True)
-CACHE_DIR.mkdir(parents=True, exist_ok=True)
-SUM_CACHE.mkdir(parents=True, exist_ok=True)
+for p in (POST_DIR, DATA_DIR, CACHE_DIR, SUM_CACHE):
+    p.mkdir(parents=True, exist_ok=True)
 
 SESSION = requests.Session()
 SESSION.headers.update({"User-Agent": "HiddenGemGamesBot/1.0 (+github actions)"})
-
 rng = SystemRandom()
 
-# Hidden-gem heuristics
+# =========================
+# Picker heuristics
+# =========================
 GOOD_REVIEW_DESC = {"Very Positive", "Overwhelmingly Positive", "Mostly Positive", "Positive"}
-MAX_PRICE_CENTS = 2500  # $25
-
-# Speed toggle
 FAST_MODE = True
 FAST_TRIES = 40
-FAST_PRICE_CENTS = 2500
+FAST_PRICE_CENTS = 2500  # $25 ceiling in fast mode
 
-# Rate limiting
+# content-safety filters
+ADULT_KEYWORDS = {"nudity","sexual","sex","adult","hentai","nsfw","porn","ecchi","erotic","lewd","fetish"}
+JOKE_KEYWORDS  = {"meme","joke","satire","parody","troll"}
+NAME_BLOCKLIST = {"hentai","sex","nude","adult","nsfw","porn","strip","ecchi","erotic","boobs","yaoi","yuri","ahega","ahegal"}
+
+# rate limit for Steam calls
 MIN_INTERVAL_S = 0.45
 _last_call = 0.0
 
-# Content safety filters
-ADULT_KEYWORDS = {"nudity","sexual","sex","adult","hentai","nsfw","porn","ecchi","erotic","lewd","fetish"}
-JOKE_KEYWORDS = {"meme","joke","satire","parody","troll"}
-NAME_BLOCKLIST = {"hentai","sex","nude","adult","nsfw","porn","strip","ecchi","erotic","boobs","yaoi","yuri","ahega","ahegal"}
-
-# Hugging Face API (for summaries)
-HF_TOKEN = os.getenv("HF_API_TOKEN")  # set in GitHub Actions secrets
-HF_MODEL = os.getenv("HF_MODEL", "facebook/bart-large-cnn")  # solid summarizer on free tier
-HF_API_URL = f"https://api-inference.huggingface.co/models/{HF_MODEL}"
-HF_HEADERS = {
-    "Authorization": f"Bearer {HF_TOKEN}",
-    "X-Wait-For-Model": "true",   # auto-spin the model if cold
-} if HF_TOKEN else {}
-
-
-# ---------- Utils ----------
+# =========================
+# Helpers
+# =========================
 def clean_text(s: str, max_len=240) -> str:
     s = re.sub(r"\s+", " ", (s or "")).strip()
     return s[: max_len - 1] + "…" if len(s) > max_len else s
@@ -68,8 +58,7 @@ def load_seen(max_keep=500):
     if SEEN_PATH.exists():
         try:
             data = json.loads(SEEN_PATH.read_text(encoding="utf-8"))
-            ids = data.get("seen_appids", [])
-            return ids[-max_keep:]
+            return (data.get("seen_appids") or [])[-max_keep:]
         except Exception:
             return []
     return []
@@ -77,8 +66,6 @@ def load_seen(max_keep=500):
 def save_seen(seen):
     SEEN_PATH.write_text(json.dumps({"seen_appids": seen[-500:]}, indent=2), encoding="utf-8")
 
-
-# ---------- HTTP + caching ----------
 def _rate_limit():
     global _last_call
     now = time.monotonic()
@@ -105,6 +92,9 @@ def http_get_json(url: str, *, params: dict | None = None, retries: int = 5, tim
                 continue
             raise
 
+# =========================
+# Steam fetchers (with cache)
+# =========================
 def get_applist():
     j = http_get_json("https://api.steampowered.com/ISteamApps/GetAppList/v2")
     return j.get("applist", {}).get("apps", [])
@@ -130,12 +120,12 @@ def get_review_summary(appid: int):
     )
     return (j or {}).get("query_summary", {}) or {}
 
-def fetch_review_texts(appid: int, num=40):
+def fetch_review_texts(appid: int, num=30):
     url = f"https://store.steampowered.com/appreviews/{appid}"
     params = {
         "json": 1, "language": "english",
         "purchase_type": "all", "filter": "recent",
-        "num_per_page": min(max(num, 5), 100)
+        "num_per_page": min(max(num, 5), 100),
     }
     r = SESSION.get(url, params=params, timeout=30)
     r.raise_for_status()
@@ -147,105 +137,9 @@ def fetch_review_texts(appid: int, num=40):
             out.append(txt)
     return out
 
-
-# ---------- Summarizer ----------
-def hf_generate(prompt: str, max_new_tokens=160, temperature=0.2):
-    """
-    Call HF Inference API. Returns '' on any failure so the pipeline never blocks publishing.
-    Works with both text-generation and summarization-style outputs.
-    """
-    if not HF_TOKEN:
-        return ""  # no token => skip summaries
-
-    payload = {
-        "inputs": prompt,
-        "parameters": {
-            # Some models ignore these; harmless.
-            "max_new_tokens": max_new_tokens,
-            "temperature": temperature,
-        }
-    }
-
-    try:
-        r = requests.post(HF_API_URL, headers=HF_HEADERS, json=payload, timeout=60)
-        # Common transient statuses: 503 while loading. We gracefully skip.
-        if r.status_code in (503, 404):  # model loading or model not found
-            return ""
-        r.raise_for_status()
-        out = r.json()
-
-        # Summarization models (e.g., BART) often return dict or list with 'summary_text'
-        if isinstance(out, list):
-            # could be [{'summary_text': '...'}] OR [{'generated_text': '...'}]
-            if out and isinstance(out[0], dict):
-                return (out[0].get("summary_text")
-                        or out[0].get("generated_text")
-                        or "").strip()
-        if isinstance(out, dict):
-            return (out.get("summary_text")
-                    or out.get("generated_text")
-                    or "").strip()
-        return ""
-    except Exception:
-        return ""  # never break the build
-
-def chunk_texts(texts, max_chars=1800):
-    chunks, buf = [], ""
-    for t in texts:
-        if len(buf) + len(t) + 1 > max_chars:
-            if buf: chunks.append(buf); buf = ""
-        buf += ("\n" + t) if buf else t
-    if buf: chunks.append(buf)
-    return chunks
-
-def get_or_make_summary(appid: int):
-    # If no token, skip LLM summaries entirely
-    if not HF_TOKEN:
-        return {"why": [], "likes": []}
-
-    p = SUM_CACHE / f"{appid}.json"
-    if p.exists():
-        try:
-            return json.loads(p.read_text(encoding="utf-8"))
-        except Exception:
-            pass
-    reviews = fetch_review_texts(appid, num=30)
-    if not reviews:
-        return {"why": [], "likes": []}
-    chunks = chunk_texts(reviews, max_chars=1800)
-
-    bullets = {"why": [], "likes": []}
-    for c in chunks:
-        prompt = (
-            "You are a neutral game critic. Summarize these Steam player reviews.\n"
-            "Return plain text with two sections:\n"
-            "Why: up to 3 short bullets\n"
-            "Likes: up to 3 short bullets\n"
-            f"REVIEWS:\n{c}"
-        )
-        out = hf_generate(prompt)
-        for line in out.splitlines():
-            if line.lower().startswith("why:") or line.startswith("-"):
-                bullets["why"].append(line.strip("-• ").replace("Why:", "").strip())
-            elif line.lower().startswith("likes:"):
-                bullets["likes"].append(line.strip("-• ").replace("Likes:", "").strip())
-
-    # dedupe & cap
-    def uniq_cap(seq, n=5):
-        seen = set(); out = []
-        for s in seq:
-            s = (s or "").strip(" •-").strip()
-            if not s or s.lower() in seen: continue
-            seen.add(s.lower()); out.append(s)
-            if len(out) >= n: break
-        return out
-
-    final = {"why": uniq_cap(bullets["why"], 5), "likes": uniq_cap(bullets["likes"], 5)}
-    p.write_text(json.dumps(final, indent=2), encoding="utf-8")
-    return final
-
-
-# ---------- Candidate checks ----------
+# =========================
+# Content-safety
+# =========================
 def is_basic_candidate(data: dict) -> bool:
     if not data or data.get("type") != "game":
         return False
@@ -253,21 +147,36 @@ def is_basic_candidate(data: dict) -> bool:
         return False
     if not data.get("name") or not data.get("header_image"):
         return False
+
+    # English support?
     langs = data.get("supported_languages") or ""
     if isinstance(langs, str) and "English" not in langs:
         return False
+
+    # Price gate (fast mode)
     is_free = data.get("is_free", False)
     price_cents = (data.get("price_overview") or {}).get("final")
     if not (is_free or (isinstance(price_cents, int) and price_cents <= FAST_PRICE_CENTS)):
         return False
-    name = (data.get("name") or "").lower()
-    if any(bad in name for bad in NAME_BLOCKLIST): return False
+
+    # Safety: names/genres
+    name_low = (data.get("name") or "").lower()
+    if any(b in name_low for b in NAME_BLOCKLIST):
+        return False
     for g in (data.get("genres") or []):
-        if any(k in g.get("description","").lower() for k in ADULT_KEYWORDS): return False
+        desc = (g.get("description") or "").lower()
+        if any(k in desc for k in ADULT_KEYWORDS | JOKE_KEYWORDS):
+            return False
+
+    # quick exclude by name tail
+    if any(t in name_low for t in ("demo", "soundtrack", "ost", "dlc", "server")):
+        return False
+
     return True
 
-
-# ---------- Picker ----------
+# =========================
+# Picker
+# =========================
 def pick_game(apps, seen_set):
     attempts = 0
     while attempts < FAST_TRIES:
@@ -280,17 +189,186 @@ def pick_game(apps, seen_set):
             data = get_appdetails(appid)
         except Exception:
             continue
-        if not data: continue
+        if not data:
+            continue
         if is_basic_candidate(data):
             return appid, data
     return None, None
 
+# =========================
+# Hugging Face summaries
+# =========================
+HF_TOKEN = os.getenv("HF_API_TOKEN")
+HF_MODEL = os.getenv("HF_MODEL", "facebook/bart-large-cnn")  # default: reliable summarizer
+HF_API_URL = f"https://api-inference.huggingface.co/models/{HF_MODEL}"
+HF_HEADERS = {
+    "Authorization": f"Bearer {HF_TOKEN}",
+    "X-Wait-For-Model": "true",
+} if HF_TOKEN else {}
 
-# ---------- Main ----------
+def hf_generate(prompt: str, max_new_tokens=200, temperature=0.2) -> str:
+    """Call HF Inference API. Returns '' on failure so build never blocks."""
+    if not HF_TOKEN:
+        return ""
+    payload = {
+        "inputs": prompt,
+        "parameters": {"max_new_tokens": max_new_tokens, "temperature": temperature},
+    }
+    try:
+        r = requests.post(HF_API_URL, headers=HF_HEADERS, json=payload, timeout=90)
+        if r.status_code in (503, 404):
+            return ""
+        r.raise_for_status()
+        out = r.json()
+        if isinstance(out, list) and out and isinstance(out[0], dict):
+            return (out[0].get("summary_text") or out[0].get("generated_text") or "").strip()
+        if isinstance(out, dict):
+            return (out.get("summary_text") or out.get("generated_text") or "").strip()
+        return ""
+    except Exception:
+        return ""
+
+def _uniq_cap(seq, n=5):
+    seen = set(); out = []
+    for s in seq:
+        s = (s or "").strip(" •-").strip()
+        if not s: continue
+        low = s.lower()
+        if low in seen: continue
+        seen.add(low); out.append(s)
+        if len(out) >= n: break
+    return out
+
+def _parse_json_like(text: str):
+    import json as _json
+    try:
+        obj = _json.loads(text)
+        why = obj.get("why") or obj.get("pros") or []
+        likes = obj.get("likes") or obj.get("what_players_like") or obj.get("cons") or []
+        why = [str(x) for x in (why if isinstance(why, list) else [why])]
+        likes = [str(x) for x in (likes if isinstance(likes, list) else [likes])]
+        return _uniq_cap(why, 5), _uniq_cap(likes, 5)
+    except Exception:
+        return [], []
+
+def _parse_two_lines(text: str):
+    why, likes = [], []
+    for line in text.splitlines():
+        low = line.lower()
+        if low.startswith("why:"):
+            payload = line.split(":", 1)[1]
+            why = [p.strip() for p in payload.split(";") if p.strip()]
+        elif low.startswith("likes:"):
+            payload = line.split(":", 1)[1]
+            likes = [p.strip() for p in payload.split(";") if p.strip()]
+    return _uniq_cap(why, 5), _uniq_cap(likes, 5)
+
+def _fallback_from_metadata(short_desc: str, review_desc: Optional[str], total: Optional[int]):
+    why = []
+    if short_desc:
+        sentences = re.split(r'[.!?]+', short_desc)
+        for s in sentences:
+            s = s.strip()
+            if 6 <= len(s) <= 100:
+                why.append(s)
+            if len(why) >= 3:
+                break
+    likes = []
+    if review_desc:
+        likes.append(f"{review_desc} overall sentiment")
+    if total:
+        likes.append(f"{total:,} reviews sampled")
+    return _uniq_cap(why, 5), _uniq_cap(likes, 5)
+
+def chunk_texts(texts, max_chars=1800):
+    chunks, buf = [], ""
+    for t in texts:
+        if len(buf) + len(t) + 1 > max_chars:
+            if buf: chunks.append(buf); buf = ""
+        buf += ("\n" + t) if buf else t
+    if buf: chunks.append(buf)
+    return chunks
+
+def get_or_make_summary(appid: int, short_desc: str, review_desc: Optional[str], total_reviews: Optional[int]):
+    """Return {'why': [...], 'likes': [...]} with caching and robust fallbacks."""
+    p = SUM_CACHE / f"{appid}.json"
+    if p.exists():
+        try:
+            data = json.loads(p.read_text(encoding="utf-8"))
+            if isinstance(data, dict) and ("why" in data or "likes" in data):
+                return data
+        except Exception:
+            pass
+
+    # If no token, skip LLM and fall back immediately
+    if not HF_TOKEN:
+        why_f, likes_f = _fallback_from_metadata(short_desc, review_desc, total_reviews)
+        result = {"why": why_f, "likes": likes_f}
+        p.write_text(json.dumps(result, indent=2), encoding="utf-8")
+        print(f"[summaries] no HF token; wrote fallback for {appid}")
+        return result
+
+    # Fetch recent reviews (small sample)
+    reviews = fetch_review_texts(appid, num=30)
+    if not reviews:
+        why_f, likes_f = _fallback_from_metadata(short_desc, review_desc, total_reviews)
+        result = {"why": why_f, "likes": likes_f}
+        p.write_text(json.dumps(result, indent=2), encoding="utf-8")
+        print(f"[summaries] no reviews; wrote fallback for {appid}")
+        return result
+
+    chunks = chunk_texts(reviews, max_chars=1800)
+
+    why_all, likes_all = [], []
+    for c in chunks:
+        # Try strict JSON first (good with instruction models)
+        prompt_json = (
+            "You are a neutral game critic who aggregates player reviews into concise insights.\n"
+            "Return ONLY valid JSON exactly in this schema:\n"
+            '{"why":["..."],"likes":["..."]}\n'
+            "Rules: max 5 items per array; each item <= 12 words; no duplicate ideas.\n"
+            "Text:\n" + c
+        )
+        out = hf_generate(prompt_json)
+        why, likes = _parse_json_like(out)
+
+        if not (why or likes):
+            # Try BART-friendly two-line format
+            prompt_lines = (
+                "From these player reviews, write two lines.\n"
+                "Line 1 begins with 'WHY:' and lists up to 5 short phrases separated by semicolons.\n"
+                "Line 2 begins with 'LIKES:' and lists up to 5 short phrases separated by semicolons.\n"
+                "Keep each phrase under 12 words. No extra commentary.\n"
+                "Text:\n" + c
+            )
+            out = hf_generate(prompt_lines)
+            why, likes = _parse_two_lines(out)
+
+        if why:  why_all.extend(why)
+        if likes: likes_all.extend(likes)
+
+    if not (why_all or likes_all):
+        why_all, likes_all = _fallback_from_metadata(short_desc, review_desc, total_reviews)
+        print(f"[summaries] fell back to metadata for {appid}")
+    else:
+        print(f"[summaries] generated bullets for {appid}: "
+              f"{len(_uniq_cap(why_all,5))}/{len(_uniq_cap(likes_all,5))}")
+
+    result = {"why": _uniq_cap(why_all, 5), "likes": _uniq_cap(likes_all, 5)}
+    try:
+        p.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    except Exception:
+        pass
+    return result
+
+# =========================
+# Main
+# =========================
 def main():
-    now_utc = dt.datetime.now(dt.timezone.utc)
+    now_utc   = dt.datetime.now(dt.timezone.utc)
     now_local = now_utc.astimezone(LOCAL_TZ)
-    slug_ts = now_local.strftime("%Y-%m-%d-%H%M%S")
+    slug_ts   = now_local.strftime("%Y-%m-%d-%H%M%S")
+    post_path = POST_DIR / f"{slug_ts}-auto.md"
 
     seen = load_seen()
     seen_set = set(seen)
@@ -302,7 +380,6 @@ def main():
         apps = []
 
     appid, data = pick_game(apps, seen_set) if apps else (None, None)
-    post_path = POST_DIR / f"{slug_ts}-auto.md"
 
     if not appid or not data:
         post_path.write_text(
@@ -316,29 +393,34 @@ Could not fetch Steam data this run. Will try again next hour.
 """,
             encoding="utf-8",
         )
+        print(f"[ok] wrote fallback {post_path}")
         return
 
-    name = data.get("name", f"App {appid}")
-    short = clean_text(data.get("short_description", ""))
-    header = data.get("header_image", "")
+    # ----- Extract display fields -----
+    name    = data.get("name", f"App {appid}")
+    short   = clean_text(data.get("short_description", ""))
+    header  = data.get("header_image", "")
     release = (data.get("release_date") or {}).get("date", "—")
-    genres = ", ".join([g.get("description") for g in (data.get("genres") or []) if g.get("description")][:5]) or "—"
+    genres  = ", ".join([g.get("description") for g in (data.get("genres") or []) if g.get("description")][:5]) or "—"
     is_free = data.get("is_free", False)
-    price = (data.get("price_overview") or {}).get("final_formatted")
+    price   = (data.get("price_overview") or {}).get("final_formatted")
     price_str = "Free to play" if is_free else (price or "Price varies")
 
     try:
         summary = get_review_summary(appid)
     except Exception:
         summary = {}
-    desc = summary.get("review_score_desc")
+    desc  = summary.get("review_score_desc")
     total = summary.get("total_reviews")
 
-    # LLM review bullets
-    summ = get_or_make_summary(appid)
-    why_block = "\n\n### Why it’s a hidden gem\n" + "".join(f"- {w}\n" for w in summ.get("why", [])) if summ.get("why") else ""
-    likes_block = "\n\n### What players like\n" + "".join(f"- {l}\n" for l in summ.get("likes", [])) if summ.get("likes") else ""
+    # ----- Summaries (LLM + fallbacks) -----
+    summ = get_or_make_summary(appid, short, desc, total)
+    why_block = ("\n\n### Why it’s a hidden gem\n" +
+                 "".join(f"- {w}\n" for w in (summ.get("why") or []))) if summ.get("why") else ""
+    likes_block = ("\n\n### What players like\n" +
+                   "".join(f"- {l}\n" for l in (summ.get("likes") or []))) if summ.get("likes") else ""
 
+    # ----- Write post -----
     md = f"""Title: {name}
 Date: {now_local.strftime('%Y-%m-%d %H:%M')}
 Category: Games
@@ -358,13 +440,11 @@ Cover: {header}
 
 *Auto-generated; game chosen randomly each run, avoiding recent repeats.*{why_block}{likes_block}
 """
-
     post_path.write_text(md, encoding="utf-8")
     print(f"[ok] wrote {post_path} for {appid} — {name!r}")
+
     seen.append(appid)
     save_seen(seen)
 
-
 if __name__ == "__main__":
-    import os
     main()
