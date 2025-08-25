@@ -166,6 +166,14 @@ def is_allowed(data: dict) -> bool:
     if any(t in nm for t in ("demo", "soundtrack", "dlc", "server", "ost")):
         return False
 
+    try:
+        summary = get_review_summary(appid)
+        total_reviews = summary.get("total_reviews") or 0
+        if total_reviews < 50:   # 👈 tweak this number to your taste
+            return False
+    except Exception:
+        return False
+
     return True
 
 
