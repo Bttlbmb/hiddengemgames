@@ -20,8 +20,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      HF_API_TOKEN: ${{ secrets.HF_API_TOKEN }}   # add this secret in repo settings
-      HF_MODEL: google/flan-t5-base           # optional; can omit (this is the default)
+      CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+      CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
       PYTHONUNBUFFERED: "1"
     steps:
       - uses: actions/checkout@v4
