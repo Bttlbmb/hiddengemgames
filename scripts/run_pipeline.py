@@ -22,7 +22,7 @@ LOCAL_TZ  = ZoneInfo("Europe/Berlin")
 POST_DIR  = Path("content/posts")
 DATA_DIR  = Path("content/data")
 SEEN_PATH = DATA_DIR / "seen.json"
-SUM_CACHE = DATA_DIR / "summaries"  # we cache likes paragraphs here
+SUM_CACHE = DATA_DIR / "summaries"
 
 for p in (POST_DIR, DATA_DIR, SUM_CACHE):
     p.mkdir(parents=True, exist_ok=True)
@@ -104,17 +104,14 @@ def get_review_summary(appid: int):
 
 
 def fetch_review_texts(appid: int, num=40):
-    """Fetch up to `num` recent review texts for an app."""
     out = []
     cursor = "*"
     while len(out) < num:
         _rate_limit()
         r = SESSION.get(
             f"https://store.steampowered.com/appreviews/{appid}",
-            params={
-                "json": 1, "language": "english", "purchase_type": "all",
-                "filter": "recent", "num_per_page": 20, "cursor": cursor,
-            },
+            params={"json": 1, "language": "english", "purchase_type": "all",
+                    "filter": "recent", "num_per_page": 20, "cursor": cursor},
             timeout=30,
         )
         if r.status_code != 200:
@@ -136,7 +133,7 @@ def fetch_review_texts(appid: int, num=40):
 
 
 # =========================
-# Game picker with basic safety filters
+# Game picker
 # =========================
 NAME_BLOCKLIST = {
     "hentai","sex","nsfw","adult","ahega","porn","erotic","nudity","strip",
@@ -163,7 +160,7 @@ def is_allowed(data: dict) -> bool:
         return False
 
     ids = (data.get("content_descriptors") or {}).get("ids") or []
-    if any(x in ids for x in (1, 3)):  # typical adult descriptors
+    if any(x in ids for x in (1, 3)):
         return False
 
     if any(t in nm for t in ("demo", "soundtrack", "dlc", "server", "ost")):
@@ -188,14 +185,13 @@ def pick_game(apps, seen_set, tries=200):
 
 
 # =========================
-# Cloudflare Workers AI paragraph summarizer
+# Cloudflare Workers AI
 # =========================
 CF_ACCOUNT_ID = os.getenv("CF_ACCOUNT_ID")
 CF_API_TOKEN  = os.getenv("CF_API_TOKEN")
-CF_MODEL = "@cf/meta/llama-3-8b-instruct"   # good balance for short outputs
+CF_MODEL = "@cf/meta/llama-3-8b-instruct"
 
 def cf_generate(prompt: str, max_tokens: int = 280) -> str:
-    """Call Cloudflare Workers AI chat API and return raw text. '' on failure."""
     if not (CF_ACCOUNT_ID and CF_API_TOKEN and prompt.strip()):
         return ""
     url = f"https://api.cloudflare.com/client/v4/accounts/{CF_ACCOUNT_ID}/ai/run/{CF_MODEL}"
@@ -219,90 +215,16 @@ def cf_generate(prompt: str, max_tokens: int = 280) -> str:
 
 
 # =========================
-# Local extractive fallback → 2–3 sentence paragraph
+# Summaries
 # =========================
-_STOP = {
-    "the","a","an","and","or","but","if","then","so","to","of","in","on","at","for","from","with","by","as",
-    "is","are","was","were","be","been","being","it","its","this","that","these","those","you","your","i","we",
-    "they","he","she","him","her","them","our","us","me","my","mine","yours","their","theirs","his","hers",
-    "not","no","yes","very","really","just","also","too","still","again","more","most","much","many","few",
-    "can","could","should","would","will","wont","won't","cant","can't","dont","don't","did","didn't","does",
-    "doesn't","do","have","has","had","having","make","made","get","got","like","lot","lots","thing","things",
-    "game","games","play","played","playing","player","players","steam","time","times","one","two","three",
-    "bit","little"
-}
-_POS_WORDS = {
-    "enjoy","love","fun","great","excellent","polished","smooth","addictive","awesome",
-    "amazing","satisfying","beautiful","charming","relaxing","clever","smart","unique",
-    "solid","well-made","well made","well-designed","well designed","responsive","tight"
-}
-_FEAT_WORDS = {
-    "puzzle","story","narrative","soundtrack","music","art","graphics","pixel","combat","mechanics","controls",
-    "co-op","coop","multiplayer","exploration","level design","progression","boss","mode","roguelike","deck",
-    "cards","strategy","platformer","metroidvania","physics","builder","craft","quest","dialogue","voice acting"
-}
-
-def _sentences(text: str):
-    parts = re.split(r"(?<=[.!?])\s+", text.strip())
-    return [p.strip() for p in parts if 6 <= len(p.strip()) <= 220]
-
-def _tokens(text: str):
-    return [t for t in re.findall(r"[a-z0-9]+", text.lower()) if t not in _STOP and len(t) > 2]
-
-def _score_sentences(sentences):
-    # tiny tf-idf-ish
-    docs = [set(_tokens(s)) for s in sentences]
-    tf = Counter([tok for s in sentences for tok in _tokens(s)])
-    df = Counter([tok for d in docs for tok in d])
-    N = max(1, len(sentences))
-    idf = {t: math.log((N + 1) / (1 + df[t])) + 1.0 for t in df}
-    scores = []
-    for s in sentences:
-        toks = _tokens(s)
-        score = sum(tf[t] * idf.get(t, 0.0) for t in toks)
-        low = s.lower()
-        if any(w in low for w in _POS_WORDS):  # small positive bias
-            score *= 1.15
-        if any(w in low for w in _FEAT_WORDS):
-            score *= 1.10
-        scores.append(score)
-    return scores
-
-def _pick_top_sentences(reviews: list[str], want=3):
-    sents = []
-    for rv in reviews:
-        sents.extend(_sentences(rv))
-    if not sents:
-        return []
-    scores = _score_sentences(sents)
-    ranked = [s for _, s in sorted(zip(scores, sents), key=lambda x: x[0], reverse=True)]
-    # keep order as they appeared but limit to top selections
-    top = []
-    seen = set()
-    for s in sents:
-        if s in ranked[: max(5, want * 2)] and s not in seen:
-            top.append(s); seen.add(s)
-        if len(top) >= want:
-            break
-    return top[:want]
-
-def reviews_to_paragraph(reviews: list[str]) -> Optional[str]:
-    picks = _pick_top_sentences(reviews, want=3)
-    if not picks:
-        return None
-    # Make it flow a bit
-    para = " ".join(picks)
-    # Light cleanup
-    para = re.sub(r'\s+', ' ', para).strip()
-    return para
-
-
-# =========================
-# Likes paragraph (CF → local → metadata) + caching
-# =========================
-def get_or_make_likes_paragraph(appid: int, name: str, short_desc: str,
-                                review_desc: Optional[str], total_reviews: Optional[int]) -> str:
-    cache_path = SUM_CACHE / f"{appid}_likes.txt"
+def get_summary_paragraph(appid: int, name: str, reviews: list[str], short_desc: str,
+                          review_desc: Optional[str], total_reviews: Optional[int],
+                          mode: str = "likes") -> str:
+    """
+    mode = "likes" → what players enjoy
+    mode = "dislikes" → what players complain about
+    """
+    cache_path = SUM_CACHE / f"{appid}_{mode}.txt"
     if cache_path.exists():
         try:
             text = cache_path.read_text(encoding="utf-8").strip()
@@ -311,54 +233,44 @@ def get_or_make_likes_paragraph(appid: int, name: str, short_desc: str,
         except Exception:
             pass
 
-    # fetch raw reviews (for CF + local)
-    reviews = fetch_review_texts(appid, num=40)
-
-    # 1) Cloudflare LLM: 2–3 sentences, positive focus
     if reviews and CF_ACCOUNT_ID and CF_API_TOKEN:
         sample = "\n\n".join(reviews[:20])
-        prompt = (
-            "You are summarizing Steam user reviews for a PC game.\n"
-            "Write 2–3 sentences describing what players appreciate about this game.\n"
-            "Be specific and concise; avoid generic praise and avoid negatives.\n"
-            f"Game title: {name}\n\n"
-            "REVIEWS SAMPLE:\n" + sample
-        )
+        if mode == "likes":
+            prompt = (
+                f"You are summarizing Steam user reviews for the game **{name}**.\n"
+                "Write 2–3 sentences describing what players like and appreciate about the game.\n"
+                "Be concise, specific, and focus on positive aspects."
+                f"\nREVIEWS SAMPLE:\n{sample}"
+            )
+        else:
+            prompt = (
+                f"You are summarizing Steam user reviews for the game **{name}**.\n"
+                "Write 2–3 sentences describing what players often complain about or dislike.\n"
+                "Be concise, specific, and focus on critical aspects."
+                f"\nREVIEWS SAMPLE:\n{sample}"
+            )
         raw = cf_generate(prompt)
         if raw:
-            text = raw.strip()
-            # Light guardrails: ensure it's 1–3 sentences and not too long
-            sents = _sentences(text)
-            if sents:
-                text = " ".join(sents[:3])
-                text = clean_text(text, max_len=550)
-                try: cache_path.write_text(text, encoding="utf-8")
-                except Exception: pass
-                print(f"[likes] CF paragraph used for {appid} ({len(sents[:3])} sentences)")
-                return text
-
-    # 2) Local extractive fallback → 2–3 sentences
-    if reviews:
-        local = reviews_to_paragraph(reviews)
-        if local:
-            text = clean_text(local, max_len=550)
+            text = clean_text(raw, max_len=550)
             try: cache_path.write_text(text, encoding="utf-8")
             except Exception: pass
-            print(f"[likes] local paragraph used for {appid}")
             return text
 
-    # 3) Metadata fallback
-    bits = []
-    if review_desc:
-        bits.append(f"Players report **{review_desc.lower()}** overall sentiment.")
-    if short_desc:
-        bits.append(clean_text(short_desc, max_len=320))
-    if total_reviews:
-        bits.append(f"Based on {total_reviews:,} reviews.")
-    text = " ".join(bits) or "Players appreciate aspects highlighted by recent reviews."
+    # fallback
+    if mode == "likes":
+        bits = []
+        if review_desc:
+            bits.append(f"Players report **{review_desc.lower()}** overall sentiment.")
+        if short_desc:
+            bits.append(clean_text(short_desc, max_len=320))
+        if total_reviews:
+            bits.append(f"Based on {total_reviews:,} reviews.")
+        text = " ".join(bits)
+    else:
+        text = "Some players mention rough edges or frustrations, but reviews vary."
+
     try: cache_path.write_text(text, encoding="utf-8")
     except Exception: pass
-    print(f"[likes] metadata fallback for {appid}")
     return text
 
 
@@ -393,10 +305,8 @@ Could not fetch Steam data this run. Will try again next hour.
 """,
             encoding="utf-8",
         )
-        print(f"[ok] wrote fallback {post_path}")
         return
 
-    # Steam review summary (for the little "Reviews: ..." line)
     try:
         qsum = get_review_summary(appid)
     except Exception as e:
@@ -416,7 +326,6 @@ Could not fetch Steam data this run. Will try again next hour.
     desc  = qsum.get("review_score_desc")
     total = qsum.get("total_reviews")
 
-    # Reviews line
     if desc and (total is not None):
         reviews_line = f"- Reviews: **{desc}** ({total:,} total)"
     elif desc:
@@ -424,10 +333,11 @@ Could not fetch Steam data this run. Will try again next hour.
     else:
         reviews_line = "- Reviews: —"
 
-    # Build the 2–3 sentence paragraph
-    likes_text = get_or_make_likes_paragraph(appid, name, short, desc, total)
+    # get reviews
+    reviews = fetch_review_texts(appid, num=40)
+    likes_text    = get_summary_paragraph(appid, name, reviews, short, desc, total, mode="likes")
+    dislikes_text = get_summary_paragraph(appid, name, reviews, short, desc, total, mode="dislikes")
 
-    # Compose the post (your template uses the Title at top = game name)
     md = f"""Title: {name}
 Date: {now_local.strftime('%Y-%m-%d %H:%M')}
 Category: Games
@@ -450,6 +360,10 @@ Cover: {header}
 ### What players like
 
 {likes_text}
+
+### What players don’t like
+
+{dislikes_text}
 """
 
     post_path.write_text(md, encoding="utf-8")
