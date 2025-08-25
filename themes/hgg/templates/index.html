@@ -7,27 +7,29 @@
   <article class="today">
     <h1 class="today-kicker">Today’s Game</h1>
 
-    <h2 class="today-title"><a href="{{ SITEURL }}/{{ a.url }}">{{ a.title }}</a></h2>
+    <h2 class="today-title">
+      <a href="{{ SITEURL }}/{{ a.url }}">{{ a.title }}</a>
+    </h2>
+
     <div class="today-meta">
       {{ a.date.strftime('%Y-%m-%d %H:%M') }}
       {% if a.category %} · {{ a.category }}{% endif %}
     </div>
 
-    <p class="today-excerpt">
-      {{ a.summary if a.summary else a.content|striptags|truncate(220) }}
-    </p>
+    <div class="today-body">
+      {# Render the FULL article body so all info is visible #}
+      {{ a.content }}
 
-    {% if a.metadata.why %}
-      <h3>Why it’s a hidden gem</h3>
-      <p>{{ a.metadata.why }}</p>
-    {% endif %}
+      {% if a.metadata.why %}
+        <h3>Why it’s a hidden gem</h3>
+        <p>{{ a.metadata.why }}</p>
+      {% endif %}
 
-    {% if a.metadata.likes %}
-      <h3>What players like</h3>
-      <p>{{ a.metadata.likes }}</p>
-    {% endif %}
-
-    <p><a class="btn" href="{{ SITEURL }}/{{ a.url }}">Open the game pick →</a></p>
+      {% if a.metadata.likes %}
+        <h3>What players like</h3>
+        <p>{{ a.metadata.likes }}</p>
+      {% endif %}
+    </div>
   </article>
 {% else %}
   <p>No articles yet.</p>
