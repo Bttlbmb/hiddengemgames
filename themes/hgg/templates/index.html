@@ -5,28 +5,24 @@
   {% set a = articles[0] %}
 
   <article class="today">
-  <h1 class="today-kicker">
-    Today’s Game — {{ a.date.strftime('%Y-%m-%d') }}
-  </h1>
+    <h1 class="today-kicker">
+      Today’s Game — {{ a.date.strftime('%Y-%m-%d') }}
+    </h1>
 
-  <h2 class="today-title">
-    <a href="{{ SITEURL }}/{{ a.url }}">{{ a.title }}</a>
-  </h2>
+    <div class="today-body">
+      {{ a.content }}
 
-  <div class="today-body">
-    {{ a.content }}
+      {% if a.metadata.why %}
+        <h3>Why it’s a hidden gem</h3>
+        <p>{{ a.metadata.why }}</p>
+      {% endif %}
 
-    {% if a.metadata.why %}
-      <h3>Why it’s a hidden gem</h3>
-      <p>{{ a.metadata.why }}</p>
-    {% endif %}
-
-    {% if a.metadata.likes %}
-      <h3>What players like</h3>
-      <p>{{ a.metadata.likes }}</p>
-    {% endif %}
-  </div>
-</article>
+      {% if a.metadata.likes %}
+        <h3>What players like</h3>
+        <p>{{ a.metadata.likes }}</p>
+      {% endif %}
+    </div>
+  </article>
 
 {% else %}
   <p>No articles yet.</p>
