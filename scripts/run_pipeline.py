@@ -308,8 +308,8 @@ def get_summary_paragraph(appid: int, name: str, reviews: list[str], short_desc:
                           review_desc: Optional[str], total_reviews: Optional[int],
                           mode: str = "likes") -> str:
     """
-    mode = "likes" → what players enjoy (2–3 sentences)
-    mode = "dislikes" → what players don't like (2–3 sentences)
+    mode = "likes" → what players enjoy (2–3 sentences, descriptive)
+    mode = "dislikes" → what players don't like (2–3 sentences, descriptive)
     """
     cache_path = SUM_CACHE / f"{appid}_{mode}.txt"
     if cache_path.exists():
@@ -320,20 +320,23 @@ def get_summary_paragraph(appid: int, name: str, reviews: list[str], short_desc:
         except Exception:
             pass
 
+    # --- Cloudflare LLM first ---
     if reviews and CF_ACCOUNT_ID and CF_API_TOKEN:
         sample = "\n\n".join(reviews[:20])
         if mode == "likes":
             prompt = (
                 f"You are summarizing Steam user reviews for the game {name}.\n"
-                "Write 2–3 sentences describing what players like and appreciate about the game.\n"
-                "Be specific and concise; avoid generic praise and avoid negatives.\n"
+                "Write 2–3 sentences describing what is praised about the game.\n"
+                "Use a direct, factual tone (e.g. 'Combat feels satisfying', 'Levels are well designed').\n"
+                "Do NOT hedge with 'players say' or 'some think'. Only describe directly.\n"
                 f"REVIEWS SAMPLE:\n{sample}"
             )
         else:
             prompt = (
                 f"You are summarizing Steam user reviews for the game {name}.\n"
-                "Write 2–3 sentences describing what players often complain about or dislike.\n"
-                "Be specific and concise; avoid hedging and avoid positives.\n"
+                "Write 2–3 sentences describing what is criticized about the game.\n"
+                "Use a direct, factual tone (e.g. 'Controls are clunky', 'Performance is unstable').\n"
+                "Do NOT hedge with 'players say' or 'some think'. Only describe directly.\n"
                 f"REVIEWS SAMPLE:\n{sample}"
             )
         raw = cf_generate(prompt)
@@ -341,30 +344,33 @@ def get_summary_paragraph(appid: int, name: str, reviews: list[str], short_desc:
             text = clamp_chars(raw, 550)
             try: cache_path.write_text(text, encoding="utf-8")
             except Exception: pass
-            print(f"[{mode}] CF paragraph used for {appid}")
+            print(f"[{mode}] CF descriptive paragraph used for {appid}")
             return text
 
-    # local extractive fallback
+    # --- Local extractive fallback ---
     if reviews:
         local = reviews_to_paragraph(reviews, want=3)
         if local:
-            try: cache_path.write_text(local, encoding="utf-8")
+            # Strip hedging phrases if present
+            text = re.sub(r"\b(some|many|players|people)\s+(say|think|mention|report|find)\b.*?", "", local, flags=re.I)
+            text = clamp_chars(text, 550)
+            try: cache_path.write_text(text, encoding="utf-8")
             except Exception: pass
-            print(f"[{mode}] local paragraph used for {appid}")
-            return local
+            print(f"[{mode}] local descriptive paragraph used for {appid}")
+            return text
 
-    # metadata fallbacks
+    # --- Metadata fallback ---
     if mode == "likes":
         bits = []
         if review_desc:
-            bits.append(f"Players report **{review_desc.lower()}** overall sentiment.")
+            bits.append(f"Overall sentiment is {review_desc.lower()}.")
         if short_desc:
             bits.append(clean_text(demarket(short_desc), max_len=320))
         if total_reviews:
             bits.append(f"Based on {total_reviews:,} reviews.")
-        text = " ".join(bits) or "Players appreciate various aspects highlighted in recent reviews."
+        text = " ".join(bits) or "Praised aspects not available."
     else:
-        text = "Some players mention rough edges or frustrations, though experiences vary."
+        text = "Criticized aspects not available."
     try: cache_path.write_text(text, encoding="utf-8")
     except Exception: pass
     print(f"[{mode}] metadata fallback for {appid}")
