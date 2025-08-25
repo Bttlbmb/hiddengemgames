@@ -166,8 +166,6 @@ Cover: {header}
 
 ![{name}]({header})
 
-**[{name}]({link})**
-
 {short}
 
 - Reviews: **{desc}**{f" ({total:,} total)" if total else "" if desc else ""}
