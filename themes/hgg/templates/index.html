@@ -9,7 +9,6 @@
   </p>
 </div>
 
-
 {% if articles and articles|count > 0 %}
   {% set a = articles[0] %}
 
@@ -23,28 +22,15 @@
     </h2>
 
     <div class="today-body">
-  {{ a.content }}
-
-  {% if a.metadata.steam %}
-    <p style="margin:1rem 0">
-      <a class="hgg-btn" href="{{ a.metadata.steam }}" target="_blank" rel="noopener">
-        View on Steam
-      </a>
-    </p>
-  {% endif %}
-
-  {% if a.metadata.why %}
-    <h3>Why it’s a hidden gem</h3>
-    <p>{{ a.metadata.why }}</p>
-  {% endif %}
-
-  {% if a.metadata.likes %}
-    <h3>What players like</h3>
-    <p>{{ a.metadata.likes }}</p>
-  {% endif %}
-</div>
-<div class="today-body">
       {{ a.content }}
+
+      {% if a.metadata.steam %}
+        <p>
+          <a class="hgg-btn" href="{{ a.metadata.steam }}" target="_blank" rel="noopener">
+            View on Steam
+          </a>
+        </p>
+      {% endif %}
 
       {% if a.metadata.why %}
         <h3>Why it’s a hidden gem</h3>
