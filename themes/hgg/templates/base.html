@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>{% if title %}{{ title }} — {% endif %}{{ SITENAME }}</title>
 
-  <!-- Theme CSS (project + local dev safe) -->
+  <!-- Theme CSS -->
   <link rel="stylesheet" href="{{ SITEURL }}/theme/hgg.css?v={{ CURRENTYEAR }}">
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Header (brand left, menu right; both centered to content width) -->
   <header class="site-header">
     <div class="wrap header-inner">
       <a class="brand" href="{{ SITEURL or '/' }}">{{ SITENAME }}</a>
@@ -30,9 +30,9 @@
     {% block content %}{% endblock %}
   </main>
 
-  <!-- Footer -->
+  <!-- Footer (aligned with content) -->
   <footer class="site-footer">
-    <div class="wrap">
+    <div class="wrap footer-inner">
       <p class="small muted">© {{ (CURRENTYEAR if CURRENTYEAR is defined else 2025) }} {{ SITENAME }}</p>
     </div>
   </footer>
