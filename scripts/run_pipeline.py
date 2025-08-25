@@ -50,9 +50,13 @@ JOKE_KEYWORDS = {"meme","joke","satire","parody","troll"}
 NAME_BLOCKLIST = {"hentai","sex","nude","adult","nsfw","porn","strip","ecchi","erotic","boobs","yaoi","yuri","ahega","ahegal"}
 
 # Hugging Face API (for summaries)
-HF_TOKEN = os.getenv("HF_API_TOKEN")
-HF_API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-small"
-HF_HEADERS = {"Authorization": f"Bearer {HF_TOKEN}"} if HF_TOKEN else {}
+HF_TOKEN = os.getenv("HF_API_TOKEN")  # set in GitHub Actions secrets
+HF_MODEL = os.getenv("HF_MODEL", "facebook/bart-large-cnn")  # solid summarizer on free tier
+HF_API_URL = f"https://api-inference.huggingface.co/models/{HF_MODEL}"
+HF_HEADERS = {
+    "Authorization": f"Bearer {HF_TOKEN}",
+    "X-Wait-For-Model": "true",   # auto-spin the model if cold
+} if HF_TOKEN else {}
 
 
 # ---------- Utils ----------
@@ -146,21 +150,44 @@ def fetch_review_texts(appid: int, num=40):
 
 # ---------- Summarizer ----------
 def hf_generate(prompt: str, max_new_tokens=160, temperature=0.2):
-    # If no token available (e.g., local run), just return empty string
+    """
+    Call HF Inference API. Returns '' on any failure so the pipeline never blocks publishing.
+    Works with both text-generation and summarization-style outputs.
+    """
     if not HF_TOKEN:
-        return ""
+        return ""  # no token => skip summaries
+
     payload = {
         "inputs": prompt,
-        "parameters": {"max_new_tokens": max_new_tokens, "temperature": temperature}
+        "parameters": {
+            # Some models ignore these; harmless.
+            "max_new_tokens": max_new_tokens,
+            "temperature": temperature,
+        }
     }
-    r = requests.post(HF_API_URL, headers=HF_HEADERS, json=payload, timeout=60)
-    r.raise_for_status()
-    out = r.json()
-    if isinstance(out, list) and out and "generated_text" in out[0]:
-        return out[0]["generated_text"].strip()
-    if isinstance(out, dict) and "summary_text" in out:
-        return out["summary_text"].strip()
-    return str(out)
+
+    try:
+        r = requests.post(HF_API_URL, headers=HF_HEADERS, json=payload, timeout=60)
+        # Common transient statuses: 503 while loading. We gracefully skip.
+        if r.status_code in (503, 404):  # model loading or model not found
+            return ""
+        r.raise_for_status()
+        out = r.json()
+
+        # Summarization models (e.g., BART) often return dict or list with 'summary_text'
+        if isinstance(out, list):
+            # could be [{'summary_text': '...'}] OR [{'generated_text': '...'}]
+            if out and isinstance(out[0], dict):
+                return (out[0].get("summary_text")
+                        or out[0].get("generated_text")
+                        or "").strip()
+        if isinstance(out, dict):
+            return (out.get("summary_text")
+                    or out.get("generated_text")
+                    or "").strip()
+        return ""
+    except Exception:
+        return ""  # never break the build
 
 def chunk_texts(texts, max_chars=1800):
     chunks, buf = [], ""
