@@ -220,6 +220,9 @@ def hf_generate(prompt: str, max_new_tokens=200, temperature=0.2) -> str:
             return ""
         r.raise_for_status()
         out = r.json()
+
+        print("[hf raw]", out)
+        
         if isinstance(out, list) and out and isinstance(out[0], dict):
             return (out[0].get("summary_text") or out[0].get("generated_text") or "").strip()
         if isinstance(out, dict):
