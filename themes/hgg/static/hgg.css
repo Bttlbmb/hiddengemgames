@@ -1,36 +1,62 @@
-:root{
-  --ink:#0b0e13; --muted:#6b7280; --bg:#faf8f5; --card:#ffffff;
-  --accent:#0ea5e9;
+/* Centered, premium single-column layout */
+.today{
+  max-width: 760px;          /* comfy reading width */
+  margin: 20px auto;         /* centers the article */
+  background: var(--card);
+  border-radius: 14px;
+  padding: 24px 22px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.06);
 }
-*{box-sizing:border-box}
-html,body{margin:0;padding:0}
-body{background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-.wrap{max-width:980px;margin:0 auto;padding:0 16px}
 
-/* Header */
-.site-header{background:#0b1220;color:#eaf2ff}
-.header-inner{display:flex;align-items:center;gap:20px;padding:14px 0}
-.brand{font-weight:900;color:#eaf2ff;font-size:1.25rem}
-.nav{margin-left:auto;display:flex;gap:18px}
-.nav a{color:#cfe0ff;font-weight:600}
-.nav a:hover{color:#fff}
+.today-kicker{
+  text-align: center;
+  font-size: .9rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #059669;
+  margin: 4px 0 8px;
+}
 
-/* Main */
-.main{padding:22px 0}
+.today-title{
+  text-align: center;
+  font-size: clamp(1.6rem, 3.2vw, 2.2rem);
+  margin: 6px 0 6px;
+}
 
-/* Today’s Game */
-.today{background:var(--card);border-radius:14px;padding:16px;box-shadow:0 6px 20px rgba(0,0,0,.06)}
-.today-kicker{font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;color:#059669;margin:6px 0 10px}
-.today-cover{width:100%;height:auto;display:block;border-radius:10px;margin:2px 0 12px}
-.today-title{font-size:clamp(1.4rem,3vw,2rem);margin:6px 0}
-.today-meta{color:var(--muted);font-size:.95rem;margin-bottom:8px}
-.today-excerpt{margin:6px 0 12px}
-.btn{display:inline-block;background:#111827;color:#fff;font-weight:700;padding:.6rem .85rem;border-radius:10px}
-.btn:hover{background:#0b1220}
+.today-meta{
+  text-align: center;
+  color: var(--muted);
+  font-size: .95rem;
+  margin-bottom: 12px;
+}
 
-/* Footer */
-.site-footer{padding:20px 0 30px}
-.small{font-size:.9rem}
-.muted{color:var(--muted)}
+/* Body content: keep lines readable and center the steam image */
+.today-body{
+  margin-top: 6px;
+}
+
+/* paragraphs & lists: nicer measure */
+.today-body p,
+.today-body ul,
+.today-body ol{
+  max-width: 66ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* center the first image (your Steam header) and make it look premium */
+.today-body img{
+  display: block;
+  margin: 10px auto 14px auto;  /* center horizontally */
+  height: auto;
+  max-width: 100%;
+  width: auto;                  /* respect natural width if smaller */
+  border-radius: 12px;
+  box-shadow: 0 10px 28px rgba(0,0,0,.10);
+}
+
+/* headings inside the body: align to left but centered container */
+.today-body h3{
+  max-width: 66ch;
+  margin: 18px auto 8px auto;
+}
