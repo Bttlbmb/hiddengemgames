@@ -42,6 +42,18 @@ FAST_PRICE_CENTS = 2500
 MIN_INTERVAL_S = 0.45  # ~2 req/sec
 _last_call = 0.0
 
+# -------- Content safety filters --------
+ADULT_KEYWORDS = {
+    "nudity", "sexual", "sex", "adult", "hentai", "nsfw", "porn",
+    "ecchi", "erotic", "lewd", "fetish"
+}
+JOKE_KEYWORDS = {"meme", "joke", "satire", "parody", "troll"}
+NAME_BLOCKLIST = {
+    "hentai", "sex", "nude", "adult", "nsfw", "porn", "strip",
+    "ecchi", "erotic", "boobs", "yaoi", "yuri", "ahega", "ahegal"
+}
+# ---------------------------------------
+
 
 # ---------- Utilities ----------
 def clean_text(s: str, max_len=240) -> str:
@@ -161,6 +173,57 @@ def get_review_summary(appid: int):
     return summary
 
 
+# ---------- Genre/tag safety helpers ----------
+def _has_keyword_any(items, keywords) -> bool:
+    for it in items:
+        if any(k in (it or "").lower() for k in keywords):
+            return True
+    return False
+
+
+def is_safe_genres(data: dict) -> bool:
+    # Genres & categories arrays
+    genre_desc = [g.get("description", "") for g in (data.get("genres") or [])]
+    cat_desc = [c.get("description", "") for c in (data.get("categories") or [])]
+    # Steam sometimes includes steamspy tags or tag strings
+    spy = data.get("steamspy_tags") or []
+    if isinstance(spy, dict):
+        spy = list(spy.keys())
+
+    # Content descriptors (may be dict with 'notes' string or list)
+    cd = data.get("content_descriptors") or {}
+    notes = cd.get("notes") if isinstance(cd, dict) else None
+    if isinstance(notes, str):
+        notes_list = [notes]
+    elif isinstance(notes, list):
+        notes_list = notes
+    else:
+        notes_list = []
+
+    # Any adult keyword in these?
+    if _has_keyword_any(genre_desc + cat_desc + spy + notes_list, ADULT_KEYWORDS):
+        return False
+
+    # Also exclude obvious meme/joke tags early
+    if _has_keyword_any(genre_desc + cat_desc + spy, JOKE_KEYWORDS):
+        return False
+
+    return True
+
+
+def is_not_meme(data: dict) -> bool:
+    genre_desc = [g.get("description", "") for g in (data.get("genres") or [])]
+    spy = data.get("steamspy_tags") or []
+    if isinstance(spy, dict):
+        spy = list(spy.keys())
+    return not _has_keyword_any(genre_desc + spy, JOKE_KEYWORDS)
+
+
+def is_clean_name(name: str) -> bool:
+    low = (name or "").lower()
+    return not any(bad in low for bad in NAME_BLOCKLIST)
+
+
 # ---------- Picker helpers ----------
 def parse_review_meta(summary: dict):
     total = summary.get("total_reviews")
@@ -197,22 +260,33 @@ def read_recent_genres(n_posts=10) -> set[str]:
 
 # ---------- Candidate checks ----------
 def is_basic_candidate(data: dict) -> bool:
-    """Fast-mode check: type, not coming soon, has name/image, English, price ok."""
+    """Fast-mode check: type, not coming soon, has name/image, English, price ok, safe content."""
     if not data or data.get("type") != "game":
         return False
     if (data.get("release_date") or {}).get("coming_soon"):
         return False
     if not data.get("name") or not data.get("header_image"):
         return False
+    # English?
     langs = data.get("supported_languages") or ""
     if isinstance(langs, str) and "English" not in langs:
         return False
 
+    # Price gate
     is_free = data.get("is_free", False)
     price_cents = (data.get("price_overview") or {}).get("final")
     if not (is_free or (isinstance(price_cents, int) and price_cents <= FAST_PRICE_CENTS)):
         return False
 
+    # Safety gates
+    if not is_safe_genres(data):
+        return False
+    if not is_not_meme(data):
+        return False
+    if not is_clean_name(data.get("name", "")):
+        return False
+
+    # Quick name filter
     name = (data.get("name") or "").lower()
     if any(bad in name for bad in ("demo", "soundtrack", "ost", "dlc", "server")):
         return False
@@ -283,13 +357,13 @@ def pick_game_weighted(apps, seen_set, tries=300):
         if not is_hidden_gem_candidate(data, summary):
             continue
 
-        score = 50.0  # simplified (use your full scoring if you want)
-        candidates.append((appid, data, summary, score))
+        # (You can reintroduce the detailed scoring here if you like.)
+        candidates.append((appid, data))
 
     if not candidates:
         return None, None
 
-    return rng.choice(candidates)[:2]
+    return rng.choice(candidates)
 
 
 # ---------- Main ----------
@@ -348,8 +422,10 @@ Could not fetch Steam data this run. Will try again next hour.
 
     g_list = extract_genres(data)
     why_bits = []
-    if short: why_bits.append(short)
-    if g_list: why_bits.append("Genres: " + ", ".join(g_list[:3]))
+    if short:
+        why_bits.append(short)
+    if g_list:
+        why_bits.append("Genres: " + ", ".join(g_list[:3]))
     why = clean_text(" — ".join(why_bits), max_len=200) if why_bits else None
 
     md = f"""Title: {name}
