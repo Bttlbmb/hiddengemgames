@@ -7,6 +7,8 @@
   --content-width: 760px;   /* one place to control card width */
 }
 
+.wrap{ max-width: var(--content-width, 980px); margin:0 auto; padding:0 16px; }
+
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
