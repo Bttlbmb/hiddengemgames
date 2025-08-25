@@ -4,6 +4,7 @@
   --bg:#0b0e13;       /* deep near-black background */
   --card:#11161e;     /* slightly lighter card panels */
   --accent:#34d399;   /* emerald glow */
+  --content-width: 760px;   /* one place to control card width */
 }
 
 *{box-sizing:border-box}
@@ -30,13 +31,13 @@ a:hover{text-decoration:underline}
 
 /* ---------- Today’s Game (centered, premium single column) ---------- */
 .today{
-  max-width:760px;              /* comfy reading width */
-  margin:20px auto;             /* centers the card */
-  background:var(--card);
-  border-radius:14px;
-  padding:24px 22px;
-  box-shadow:0 6px 20px rgba(0,0,0,.06);
-  text-align:center;            /* center headings/meta for a premium feel */
+  max-width: var(--content-width);
+  margin: 20px auto;
+  background: var(--card);
+  border-radius: 14px;
+  padding: 24px 22px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.06);
+  text-align: center;
 }
 
 .today-kicker{
@@ -100,23 +101,25 @@ a:hover{text-decoration:underline}
   .today-body img{ max-width:100%; }  /* let image fit small screens */
 }
 
-/* Intro block */
+/* Intro block — match Today card exactly */
 .site-intro{
-  max-width:720px;
-  margin:0 auto 26px auto;
-  padding:14px 18px;
-  background:var(--card);
-  border-radius:12px;
-  box-shadow:0 4px 14px rgba(0,0,0,.05);
-  text-align:center;
+  max-width: var(--content-width);
+  margin: 20px auto;                 /* same outer spacing as .today */
+  padding: 24px 22px;                /* same inner padding as .today */
+  background: var(--card);
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.06);
+  text-align: center;
 }
 .site-intro p{
-  margin:0;
-  font-size:1rem;
-  color:var(--muted);
-  line-height:1.5;
+  margin: 0;
+  font-size: 1rem;
+  color: var(--muted);
+  line-height: 1.55;
+  max-width: 66ch;                   /* readable measure */
+  margin-left: auto;
+  margin-right: auto;
 }
-.site-intro strong{
-  color:var(--ink);
-}
+.site-intro strong{ color: var(--ink); }
+
 
