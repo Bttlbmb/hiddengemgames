@@ -1,127 +1,157 @@
+/* ===========================
+   Hidden Gem Games – hgg.css
+   =========================== */
+
+/* ---------- Theme (premium dark) ---------- */
 :root{
-  --ink:#e6f1ff;      /* soft light text */
-  --muted:#94a3b8;    /* muted blue-gray */
-  --bg:#0b0e13;       /* deep near-black background */
-  --card:#11161e;     /* slightly lighter card panels */
-  --accent:#34d399;   /* emerald glow */
-  --content-width: 760px;   /* one place to control card width */
+  /* Colors */
+  --bg:#0b0e13;        /* page background (near-black) */
+  --card:#11161e;      /* card background */
+  --ink:#e6f1ff;       /* main text */
+  --muted:#9fb0c7;     /* secondary text */
+  --accent:#10b981;    /* emerald accent */
+
+  /* Layout */
+  --content-width: 820px;  /* shared max width for header/main/footer */
+  --radius: 14px;
+  --shadow: 0 6px 20px rgba(0,0,0,.18);
 }
 
-.wrap{ max-width: var(--content-width, 980px); margin:0 auto; padding:0 16px; }
-
+/* ---------- Base ---------- */
 *{box-sizing:border-box}
-html,body{margin:0;padding:0}
+html,body{height:100%}
 body{
+  margin:0;
   background:var(--bg);
   color:var(--ink);
-  font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  font: 400 16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-.wrap{max-width:980px;margin:0 auto;padding:0 16px}
+a{color:inherit}
+a:hover{color:var(--ink)}
 
-/* Header */
-.site-header{background:#0b1220;color:#eaf2ff}
-.header-inner{display:flex;align-items:center;gap:20px;padding:14px 0}
-.brand{font-weight:900;color:#eaf2ff;font-size:1.25rem}
-.nav{margin-left:auto;display:flex;gap:18px}
-.nav a{color:#cfe0ff;font-weight:600}
-.nav a:hover{color:#fff}
-
-/* Main */
-.main{padding:22px 0}
-
-/* ---------- Today’s Game (centered, premium single column) ---------- */
-.today{
+/* Centering helper used by header, main, footer */
+.wrap{
   max-width: var(--content-width);
-  margin: 20px auto;
-  background: var(--card);
-  border-radius: 14px;
-  padding: 24px 22px;
-  box-shadow: 0 6px 20px rgba(0,0,0,.06);
-  text-align: center;
+  margin: 0 auto;
+  padding: 0 16px;
 }
 
-.today-kicker{
-  font-size:.9rem;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  color:#059669;
-  margin:4px 0 8px;
+/* ---------- Header / Nav ---------- */
+.site-header{
+  position: sticky; top:0; z-index:50;
+  background:var(--bg);
+  border-bottom:1px solid rgba(255,255,255,.04);
 }
-
-.today-title{
-  font-size:clamp(1.6rem,3.2vw,2.2rem);
-  margin:6px 0 6px;
+.header-inner{
+  height:64px;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px;
 }
-
-.today-meta{
+.brand{
+  text-decoration:none;
+  font-weight:800;
+  letter-spacing:.2px;
+  font-size:1.125rem;
+  color:var(--ink);
+}
+.nav{display:flex; align-items:center; gap:18px;}
+.nav a{
+  text-decoration:none;
   color:var(--muted);
+  font-weight:600;
   font-size:.95rem;
-  margin-bottom:12px;
+  padding:6px 2px;
+  border-radius:8px;
+  opacity:.95;
+}
+.nav a:hover{
+  color:var(--ink);
+  text-decoration:underline;
+  text-underline-offset:3px;
 }
 
-/* Content inside the card */
-.today-body{ margin-top:6px; }
-
-/* Keep body text readable (not full-width) and left-aligned */
-.today-body p,
-.today-body ul,
-.today-body ol{
-  text-align:left;
-  max-width:66ch;
-  margin-left:auto;
-  margin-right:auto;
-}
-
-/* Center the Steam image, no overlay, tasteful size cap */
-.today-body img{
-  display:block;
-  margin:10px auto 14px auto;   /* center horizontally */
-  height:auto;
-  width:auto;                    /* respect natural width */
-  max-width:560px;               /* cap so it doesn’t get too wide */
-  border-radius:12px;
-  box-shadow:0 10px 28px rgba(0,0,0,.10);
-}
-
-/* Headings inside the body: align left but keep same measure */
-.today-body h3{
-  max-width:66ch;
-  margin:18px auto 8px auto;
-  text-align:left;
-}
-
-/* Footer */
-.site-footer{padding:20px 0 30px}
-.small{font-size:.9rem}
+/* ---------- Footer ---------- */
+.site-footer{padding:28px 0 40px; color:var(--muted);}
+.footer-inner{display:flex; align-items:center; justify-content:center; text-align:center;}
+.small{font-size:.95rem}
 .muted{color:var(--muted)}
 
-/* ---------- Responsive tweaks ---------- */
-@media (max-width: 640px){
-  .today{ padding:18px 14px; }
-  .today-body img{ max-width:100%; }  /* let image fit small screens */
-}
-
-/* Intro block — match Today card exactly */
+/* ---------- Intro card ---------- */
 .site-intro{
-  max-width: var(--content-width);
-  margin: 20px auto;                 /* same outer spacing as .today */
-  padding: 24px 22px;                /* same inner padding as .today */
-  background: var(--card);
-  border-radius: 14px;
-  box-shadow: 0 6px 20px rgba(0,0,0,.06);
-  text-align: center;
+  max-width:var(--content-width);
+  margin:20px auto;
+  padding:14px 18px;
+  background:var(--card);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  text-align:center;
 }
-.site-intro p{
-  margin: 0;
-  font-size: 1rem;
-  color: var(--muted);
-  line-height: 1.55;
-  max-width: 66ch;                   /* readable measure */
-  margin-left: auto;
-  margin-right: auto;
+.site-intro p{margin:0; color:var(--muted)}
+.site-intro strong{color:var(--ink)}
+
+/* ---------- Today card ---------- */
+.today{
+  max-width:var(--content-width);
+  margin:20px auto;
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:24px 22px;
+  box-shadow:var(--shadow);
 }
-.site-intro strong{ color: var(--ink); }
+.today-kicker{
+  text-align:center;
+  font-size:.9rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin:4px 0 10px;
+}
+.today-title{
+  text-align:center;
+  font-weight:800;
+  font-size:clamp(1.6rem,3.6vw,2.4rem);
+  margin:6px 0 16px;
+}
 
+/* Markdown/body content inside today card */
+.today-body{color:var(--ink)}
+.today-body p{margin:0 0 14px}
+.today-body h3{
+  margin:18px 0 10px;
+  font-size:1.05rem;
+  color:var(--ink);
+}
+.today-body ul{
+  margin:12px 0 18px 1.25rem;
+  padding:0;
+}
+.today-body li{margin:6px 0}
 
+/* Steam header image */
+.today-body img{
+  display:block;
+  max-width:100%;
+  width:560px;          /* typical Steam header width */
+  height:auto;
+  margin:0 auto 14px;
+  border-radius:12px;
+  box-shadow:0 8px 18px rgba(0,0,0,.28);
+}
+
+/* Links in body */
+.today-body a{color:var(--ink); text-decoration:underline;}
+.today-body a:hover{opacity:.9}
+
+/* ---------- Utilities ---------- */
+.center{text-align:center}
+.hr{height:1px; background:rgba(255,255,255,.06); border:0; margin:16px 0}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px){
+  .header-inner{flex-wrap:wrap; height:auto; padding:10px 0}
+  .nav{width:100%; justify-content:flex-start; gap:14px}
+  .today, .site-intro{padding:18px 14px}
+  .today-body img{width:100%}
+}
