@@ -1,9 +1,9 @@
 :root{
-  --ink:#0b0e13;        /* primary text */
-  --muted:#6b7280;      /* subtle text */
-  --bg:#faf8f5;         /* page background */
-  --card:#ffffff;       /* card background */
-  --accent:#0ea5e9;     /* links / accents */
+  --ink:#e9f1ff;   /* light text */
+  --muted:#9fb0c7; /* soft blue grey */
+  --bg:#0b0e13;    /* near-black */
+  --card:#11161e;  /* deep navy cards */
+  --accent:#22d3ee; /* glowing cyan */
 }
 
 *{box-sizing:border-box}
