@@ -3,12 +3,15 @@ name: pelican-build
 on:
   push:
     branches: [ main ]
-  schedule:
-    - cron: "0 5 * * *"     # daily at 05:00 UTC
   workflow_dispatch:
+  schedule:
+    # Daily pick at 05:00 UTC (adjust if you want)
+    - cron: "0 5 * * *"
+    # Weekly harvest on Sunday 04:30 UTC
+    - cron: "30 4 * * 0"
 
 permissions:
-  contents: write
+  contents: write     # we commit posts / data back to the repo
   pages: write
   id-token: write
 
@@ -17,12 +20,16 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  # -----------------------------
+  # Weekly harvest (refresh pool)
+  # -----------------------------
+  weekly-harvest:
+    name: Weekly harvest (refresh candidate pool)
     runs-on: ubuntu-latest
-    env:
-      CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-      CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-      PYTHONUNBUFFERED: "1"
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'push' ||
+      (github.event_name == 'schedule' && github.event.schedule == '30 4 * * 0')
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,42 +43,75 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          python -c "import pelican; print('Pelican version:', pelican.__version__)"
+          python -V
 
-      - name: Ensure content exists (debug)
+      - name: Harvest candidate pool
+        env:
+          # Offline toggle; leave "1" so network is allowed on harvest
+          HGG_FETCH: "1"
         run: |
-          ls -la
-          ls -la content || true
+          python -m app.main --harvest
 
-      - name: Generate hourly post
-        run: python scripts/run_pipeline.py
-
-      - name: 'Debug: list generated posts'
-        run: |
-          echo "Markdown files under content/:"
-          find content -maxdepth 3 -type f -name "*.md" -print
-          echo "Seen list (if any):"
-          test -f content/data/seen.json && tail -n +1 content/data/seen.json || echo "no seen.json yet"
-
-      # ✅ commit first, then rebase, then push
-      - name: Commit & push generated posts (rebase-safe)
+      - name: Commit & push updated data (pool/appstats/applist)
         run: |
           set -e
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          # Stage generated files and seen list (if present)
-          git add content/posts/*.md || true
-          git add content/data/seen.json || true
-
-          # If nothing staged, exit quietly
+          git add content/data/candidate_pool.json content/data/pool_meta.json content/data/applist.json content/data/appstats || true
           if git diff --cached --quiet; then
-            echo "No new files to commit."
+            echo "No data changes to commit."
           else
-            git commit -m "chore(posts): hourly post + seen list [skip ci]"
-            # Rebase on latest remote, then push
-            git fetch origin main
-            git -c rebase.autoStash=true pull --rebase origin main
+            git commit -m "chore(data): refresh candidate pool [skip ci]"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+  # -----------------------------
+  # Daily pick → build → deploy
+  # -----------------------------
+  daily-pick:
+    name: Daily pick (post) + Pelican build + Deploy Pages
+    runs-on: ubuntu-latest
+    needs: weekly-harvest
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'push' ||
+      (github.event_name == 'schedule' && github.event.schedule == '0 5 * * *')
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          python -V
+
+      # Toggle HGG_FETCH="0" if you want to rebuild without hitting Steam/AI.
+      - name: Generate daily post
+        env:
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_API_TOKEN:  ${{ secrets.CF_API_TOKEN }}
+          HGG_FETCH: "1"
+        run: |
+          python -m app.main --daily
+
+      - name: Commit & push generated post
+        run: |
+          set -e
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/posts/*.md content/data/summaries || true
+          if git diff --cached --quiet; then
+            echo "No new posts to commit."
+          else
+            git commit -m "chore(posts): daily pick [skip ci]"
+            git pull --rebase origin main
             git push origin HEAD:main
           fi
 
@@ -88,8 +128,12 @@ jobs:
         with:
           path: ./output
 
+  # -----------------------------
+  # Deploy Pages
+  # -----------------------------
   deploy:
-    needs: build
+    name: Deploy GitHub Pages
+    needs: daily-pick
     runs-on: ubuntu-latest
     environment:
       name: github-pages
