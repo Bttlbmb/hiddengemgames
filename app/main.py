@@ -1,292 +1,240 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-import math
-import random
-from pathlib import Path
-from typing import Dict, List, Optional
-
-from . import config as C
-from . import storage as S
-from . import steam
-from . import ai
-
-rng = random.SystemRandom()
-
-# ---- product rules (core filters & scoring) ----
-NAME_BLOCKLIST = {"hentai","sex","nsfw","adult","ahega","porn","erotic","nudity","strip","yuri","yaoi"}
-
-def english_supported(details: dict) -> bool:
-    langs = details.get("supported_languages") or ""
-    return ("English" in langs) if isinstance(langs, str) else True
-
-def is_core_safe(details: dict) -> bool:
-    if not details or details.get("type") != "game": return False
-    if (details.get("release_date") or {}).get("coming_soon"): return False
-    if not details.get("name") or not details.get("header_image"): return False
-    if isinstance(details.get("supported_languages"), str) and "English" not in details["supported_languages"]: return False
-    nm = (details.get("name") or "").lower()
-    if any(b in nm for b in NAME_BLOCKLIST): return False
-    ids = (details.get("content_descriptors") or {}).get("ids") or []
-    if any(x in ids for x in (1,3)): return False
-    if any(t in nm for t in ("demo","soundtrack","dlc","server","ost")): return False
-    return True
-
-def gemscore_from_cached(c: dict) -> float:
-    total = max(1, int(c.get("total_reviews", 0) or 0))
-    pos   = (c.get("total_positive", 0) / total)
-    # obscurity: 50→1.0, 2000→0.0
-    try:
-        obsc = 1 - (math.log10(total) - math.log10(C.MIN_REVIEWS)) / (math.log10(C.MAX_REVIEWS) - math.log10(C.MIN_REVIEWS))
-    except Exception:
-        obsc = 0.5
-    obsc = max(0.0, min(1.0, obsc))
-    genres = c.get("genres") or []
-    uniq = 1.0 - min(1.0, len(genres)/8.0)  # crude rarity proxy
-    value = 0.6  # neutral until we compute playtime/price
-    score = 100 * (0.45*pos + 0.25*obsc + 0.15*uniq + 0.15*value)
-    return round(score, 1)
-
-def ok_with_diversity(c: dict, seen_ids: List[int]) -> bool:
-    # Placeholder: allow all; extend with real history if desired
-    return True
-
-# ---- harvesting (low request budget) ----
-def _cache_appstats(appid: int, details: dict, summary: dict) -> dict:
-    data = {
-        "appid": appid,
-        "name": details.get("name"),
-        "genres": [g.get("description") for g in (details.get("genres") or []) if g.get("description")],
-        "is_free": details.get("is_free", False),
-        "price": (details.get("price_overview") or {}).get("final_formatted"),
-        "release_date": (details.get("release_date") or {}).get("date"),
-        "publisher": (details.get("publishers") or [None])[0],
-        "header_image": details.get("header_image"),
-        "total_reviews": summary.get("total_reviews", 0),
-        "total_positive": summary.get("total_positive", 0),
-        "review_score_desc": summary.get("review_score_desc"),
-        "ts": int(C.now_local().timestamp()),
-    }
-    S.write_appstats(appid, data)
-    return data
-
-def refresh_candidate_pool(sample_appids: List[int], max_probe: int) -> int:
-    pool = S.read_pool()
-    present = {p["appid"] for p in pool}
-    added = 0
-    probed = 0
-    for appid in sample_appids:
-        if probed >= max_probe: break
-        probed += 1
-        if appid in present: continue
-
-        try:
-            details = steam.get_appdetails(appid)
-        except Exception:
-            continue
-        if not is_core_safe(details):
-            continue
-
-        try:
-            summary = steam.get_review_summary(appid)
-        except Exception:
-            continue
-
-        total = int(summary.get("total_reviews", 0) or 0)
-        if total < C.MIN_REVIEWS or total > C.MAX_REVIEWS:
-            continue
-        pos_ratio = (summary.get("total_positive", 0) / max(1, total))
-        if pos_ratio < C.MIN_POS_RATIO:
-            continue
-
-        stats = _cache_appstats(appid, details, summary)
-        pool.append({k: stats.get(k) for k in (
-            "appid","name","genres","is_free","price","header_image",
-            "total_reviews","total_positive","review_score_desc",
-            "release_date","publisher"
-        )})
-        added += 1
-
-    if added:
-        S.write_pool(pool)
-        S.write_pool_meta({"last_refresh": int(C.now_local().timestamp()), "size": len(pool)})
-        print(f"[harvest] added {added} (pool size={len(pool)})")
-    else:
-        print("[harvest] no new candidates")
-    return added
-
-def pool_is_stale() -> bool:
-    meta = S.read_pool_meta()
-    if not meta: return True
-    last = meta.get("last_refresh", 0)
-    import time
-    return (time.time() - last) > C.POOL_TTL_SECS
-
-def applist_is_stale() -> bool:
-    mt = S.applist_mtime()
-    if mt is None: return True
-    return C.is_stale(mt, C.APPLIST_TTL_SECS)
-
-def try_harvest_if_needed():
-    pool = S.read_pool()
-    need = C.HARVEST_FORCE or pool_is_stale() or (len(pool) < C.POOL_MIN_SIZE)
-    if not need:
-        print(f"[harvest] skipped (pool ok, size={len(pool)})")
-        return
-
-    apps = []
-    if applist_is_stale():
-        apps = steam.get_applist()
-    else:
-        apps = S.read_applist()
-
-    if not apps:
-        print("[harvest] no applist; aborting")
-        return
-
-    rng.shuffle(apps)
-    sample_ids = [a["appid"] for a in apps[: max(C.HARVEST_MAX_PROBE * 4, 400)]]
-    refresh_candidate_pool(sample_ids, max_probe=C.HARVEST_MAX_PROBE)
-
-# ---- rendering ----
-def _md_escape(s: str) -> str:
-    return (s or "").replace("<", "&lt;").replace(">", "&gt;")
-
-def render_post(appid: int, pick: dict, reviews: List[str]) -> str:
-    name   = pick.get("name", f"App {appid}")
-    stats  = S.read_appstats(appid) or pick
-    header = stats.get("header_image", "")
-    release = stats.get("release_date", "—")
-    genres  = ", ".join((stats.get("genres") or [])[:5]) or "—"
-    price_str = "Free to play" if stats.get("is_free") else (stats.get("price") or "Price varies")
-    total = int(pick.get("total_reviews") or 0)
-    pos   = int(pick.get("total_positive") or 0)
-    desc  = pick.get("review_score_desc")
-    if desc and total:
-        reviews_line = f"- Reviews: **{desc}** ({total:,} total; {round(100*pos/max(1,total))}%)"
-    elif desc:
-        reviews_line = f"- Reviews: **{desc}**"
-    else:
-        reviews_line = "- Reviews: —"
-
-    # For overview we don't fetch short_desc in daily mode to avoid extra request; pass empty.
-    short_desc = ""
-
-    # Paragraphs (respect offline toggle)
-    if C.should_fetch():
-        overview  = ai.make_overview(appid, name, short_desc, reviews)
-        likes     = ai.make_likes(appid, name, reviews)
-        dislikes  = ai.make_dislikes(appid, name, reviews)
-        hidden_gem= ai.make_hidden_gem(appid, name, reviews, desc, total)
-    else:
-        overview   = S.read_summary(appid, "overview")   or "Overview unavailable (offline)."
-        likes      = S.read_summary(appid, "likes")      or "Likes unavailable (offline)."
-        dislikes   = S.read_summary(appid, "dislikes")   or "Dislikes unavailable (offline)."
-        hidden_gem = S.read_summary(appid, "hidden_gem") or "Hidden-gem note unavailable (offline)."
-
-    now = C.now_local()
-    slug_ts = now.strftime("%Y-%m-%d-%H%M%S")
-    md = f"""Title: {name}
-Date: {now.strftime('%Y-%m-%d %H:%M')}
-Category: Games
-Tags: auto, steam
-Slug: {appid}-{slug_ts}
-Cover: {header}
-
-![{_md_escape(name)}]({header})
-
-{reviews_line}
-- Release: **{_md_escape(release)}**
-- Genres: **{_md_escape(genres)}**
-- Price: **{_md_escape(price_str)}**
-- Steam AppID: `{appid}`
-
-*Auto-generated; daily pick from a cached candidate pool refreshed weekly.*
-
-### Overview
-
-{overview}
-
-### Why it’s a hidden gem
-
-{hidden_gem}
-
-### What players like
-
-{likes}
-
-### What players don’t like
-
-{dislikes}
+# app/main.py
 """
-    return md
+Entry points for Hidden Gem Games:
+- --harvest : refresh weekly candidate pool (no deploy)
+- --daily   : pick one game, generate a post
+This version writes editorial paragraphs for likes/dislikes/overview (no bullet points).
+"""
 
-# ---- daily run (0–1 Steam calls)
-def run_daily():
-    # ensure pool healthy (but skip refresh in offline mode)
-    if C.should_fetch():
-        try_harvest_if_needed()
-    pool = S.read_pool()
+from __future__ import annotations
+
+import os
+import re
+import json
+import textwrap
+import datetime as dt
+from pathlib import Path
+from zoneinfo import ZoneInfo
+from random import SystemRandom
+from typing import Tuple, List
+
+from . import steam
+from . import storage
+from .ai import (
+    build_corpus,
+    make_overview_text,
+    make_hidden_gem_text,
+    make_likes_text,
+    make_dislikes_text,
+)
+
+LOCAL_TZ = ZoneInfo(os.environ.get("HGG_TZ", "Europe/Berlin"))
+POST_DIR = Path("content/posts")
+DATA_DIR = Path("content/data")
+SUM_DIR  = DATA_DIR / "summaries"
+POST_DIR.mkdir(parents=True, exist_ok=True)
+SUM_DIR.mkdir(parents=True, exist_ok=True)
+
+rng = SystemRandom()
+
+# Toggle network fetch (Steam + AI). 0 => offline (use cached only)
+FETCH_OK = os.environ.get("HGG_FETCH", "1") != "0"
+
+# Basic thresholds (fast and safe)
+MIN_REVIEWS = int(os.environ.get("HGG_MIN_REVIEWS", "30"))
+MIN_STEAM_SCORE = float(os.environ.get("HGG_MIN_STEAM_SCORE", "70"))  # derived % if you store one
+DISALLOW_NSFW = os.environ.get("HGG_BLOCK_NSFW", "1") == "1"
+
+
+def _clean(s: str, n=400) -> str:
+    s = re.sub(r"\s+", " ", (s or "")).strip()
+    return s[: n - 1] + "…" if len(s) > n else s
+
+
+def _save_md(path: Path, content: str) -> None:
+    path.write_text(content, encoding="utf-8")
+    print(f"[ok] wrote {path}")
+
+
+def _sample_reviews_text(reviews: List[str], cap_chars=800) -> str:
+    """Collapse a small handful of reviews into a plain text block, capped by characters."""
+    out: List[str] = []
+    total = 0
+    for r in reviews:
+        r = _clean(r, 300)
+        if not r:
+            continue
+        if total + len(r) + 1 > cap_chars:
+            break
+        out.append(r)
+        total += len(r) + 1
+    return "\n".join(out)
+
+
+def _md_from_paras(title: str, header_img: str, link: str, meta_block: str,
+                   overview: str, why: str, likes: str, dislikes: str) -> str:
+    # Paragraph-only sections (no lists), tidy headings.
+    body = textwrap.dedent(f"""
+    Title: {title}
+    Date: {dt.datetime.now(LOCAL_TZ).strftime('%Y-%m-%d %H:%M')}
+    Category: Games
+    Tags: auto, steam
+    Slug: gem-{dt.datetime.now(LOCAL_TZ).strftime('%Y%m%d%H%M%S')}
+    Cover: {header_img}
+
+    ![]({header_img})
+
+    {meta_block}
+
+    ### Overview
+    {overview}
+
+    ### Why it’s a hidden gem
+    {why}
+
+    ### What players like
+    {likes}
+
+    ### What players don’t like
+    {dislikes}
+
+    *Auto-generated; daily pick from a cached candidate pool refreshed weekly.*
+    """).strip()
+    return body + "\n"
+
+
+# -------------------- DAILY PICK --------------------
+
+def run_daily() -> None:
+    # pick from candidate pool (weekly refreshed)
+    pool = storage.load_candidate_pool()
     if not pool:
-        now = C.now_local()
-        slug_ts = now.strftime("%Y-%m-%d-%H%M%S")
-        post_path = C.POST_DIR / f"{slug_ts}-auto.md"
-        post_path.write_text(
-            f"""Title: No Pick — {now.strftime('%Y-%m-%d %H:%M %Z')}
-Date: {now.strftime('%Y-%m-%d %H:%M')}
-Category: Games
-Tags: auto
-Slug: fallback-{slug_ts}
+        print("[warn] candidate pool empty; you may need to run --harvest")
+        apps = steam.get_applist() if FETCH_OK else []
+        picked = steam.fast_pick(apps, min_reviews=MIN_REVIEWS, block_nsfw=DISALLOW_NSFW) if apps else None
+    else:
+        picked = steam.pick_from_pool(pool)
 
-Candidate pool is empty or offline mode is enabled. Will try again later.
-""", encoding="utf-8")
-        print("[daily] wrote fallback (empty pool)")
+    if not picked:
+        # fallback post
+        now_local = dt.datetime.now(LOCAL_TZ)
+        slug_ts = now_local.strftime("%Y-%m-%d-%H%M%S")
+        _save_md(
+            POST_DIR / f"{slug_ts}-auto.md",
+            textwrap.dedent(f"""\
+                Title: Hourly Game — {now_local.strftime('%Y-%m-%d %H:%M %Z')}
+                Date: {now_local.strftime('%Y-%m-%d %H:%M')}
+                Category: Games
+                Tags: auto
+                Slug: fallback-{slug_ts}
+
+                Could not fetch Steam data this run. Will try again next time.
+            """),
+        )
         return
 
-    seen = S.read_seen()
-    candidates = [c for c in pool if ok_with_diversity(c, seen)]
-    if not candidates: candidates = pool
-    for c in candidates:
-        c["gemscore"] = gemscore_from_cached(c)
-    candidates.sort(key=lambda x: x["gemscore"], reverse=True)
-    pick = candidates[0]
-    appid = int(pick["appid"])
+    appid, data = picked
+    name = data.get("name", f"App {appid}")
+    header = data.get("header_image", "")
+    link = f"https://store.steampowered.com/app/{appid}/"
+    short = _clean(data.get("short_description", ""), 500)
 
-    # fetch 1 page of reviews only if allowed
-    if C.should_fetch():
-        reviews = steam.fetch_review_texts(appid, num=20)
+    # Minimal meta for the top block
+    summary = steam.get_review_summary_safe(appid) if FETCH_OK else {}
+    desc = summary.get("review_score_desc")
+    total = summary.get("total_reviews")
+    review_line = f"Reviews: **{desc}** ({total:,} total)" if (desc and total) else (f"Reviews: **{desc}**" if desc else "Reviews: —")
+
+    release = (data.get("release_date") or {}).get("date", "—")
+    genres = ", ".join([g.get("description") for g in (data.get("genres") or [])][:5]) or "—"
+    is_free = data.get("is_free", False)
+    price = (data.get("price_overview") or {}).get("final_formatted")
+    price_str = "Free to play" if is_free else (price or "Price varies")
+
+    gemscore = storage.estimate_gemscore(appid, summary, data)  # your helper; OK if it returns None
+    gemline = f"\n- GemScore: **{gemscore:.1f}**" if isinstance(gemscore, (int, float)) else ""
+
+    meta_block = textwrap.dedent(f"""
+    **[{name}]({link})**
+
+    - {review_line}
+    - Release: **{release}**
+    - Genres: **{genres}**
+    - Price: **{price_str}**
+    - Steam AppID: `{appid}`{gemline}
+    """).strip()
+
+    # ---------- Editorial paragraphs ----------
+    # Build a tiny corpus: description + a handful of review snippets
+    reviews_snips = []
+    if FETCH_OK:
+        reviews_snips = steam.get_review_snippets_safe(appid, max_items=20) or []
+    corpus = build_corpus(short, _sample_reviews_text(reviews_snips, cap_chars=900))
+
+    if FETCH_OK:
+        try:
+            overview = make_overview_text(corpus)
+            why      = make_hidden_gem_text(corpus)
+            likes    = make_likes_text(corpus)
+            dislikes = make_dislikes_text(corpus)
+        except Exception as e:
+            print(f"[summaries] workers-ai failed: {e}; falling back to metadata.")
+            overview = short or "Overview not available."
+            why      = "Well-liked niche qualities and a focused premise can make this one stand out."
+            likes    = "Players respond positively to its core loop and presentation."
+            dislikes = "Criticism tends to focus on rough edges and limited depth."
     else:
-        reviews = []
+        overview = short or "Overview not available."
+        why      = "Well-liked niche qualities and a focused premise can make this one stand out."
+        likes    = "Players respond positively to its core loop and presentation."
+        dislikes = "Criticism tends to focus on rough edges and limited depth."
 
-    md = render_post(appid, pick, reviews)
-    now = C.now_local()
-    slug_ts = now.strftime("%Y-%m-%d-%H%M%S")
-    post_path = C.POST_DIR / f"{slug_ts}-auto.md"
-    post_path.write_text(md, encoding="utf-8")
-    print(f"[daily] wrote {post_path} — {pick.get('name')!r}")
+    # ---------- Write markdown ----------
+    now_local = dt.datetime.now(LOCAL_TZ)
+    slug_ts = now_local.strftime("%Y-%m-%d-%H%M%S")
+    md = _md_from_paras(
+        title=name,
+        header_img=header,
+        link=link,
+        meta_block=meta_block,
+        overview=overview,
+        why=why,
+        likes=likes,
+        dislikes=dislikes,
+    )
+    _save_md(POST_DIR / f"{slug_ts}-auto.md", md)
 
-    seen.append(appid)
-    S.write_seen(seen)
 
-# ---- weekly harvest (low requests)
-def run_harvest():
-    # refresh applist if stale, do probes with harsh gates
-    try_harvest_if_needed()
+# -------------------- WEEKLY HARVEST --------------------
 
-# ---- entrypoint
+def run_harvest() -> None:
+    if not FETCH_OK:
+        print("[harvest] HGG_FETCH=0 — skipping network harvest.")
+        return
+    print("[harvest] refreshing candidate pool…")
+    apps = steam.get_applist()
+    pool = steam.build_candidate_pool(apps, min_reviews=MIN_REVIEWS, block_nsfw=DISALLOW_NSFW)
+    storage.save_candidate_pool(pool)
+    print(f"[harvest] pool size: {len(pool)}")
+
+
+# -------------------- CLI --------------------
+
 def main():
     import argparse
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--daily", action="store_true", help="Run daily pick and write a post")
-    ap.add_argument("--harvest", action="store_true", help="Refresh candidate pool (low network)")
-    args = ap.parse_args()
+    p = argparse.ArgumentParser()
+    p.add_argument("--harvest", action="store_true", help="refresh weekly candidate pool only")
+    p.add_argument("--daily",   action="store_true", help="generate daily pick post")
+    args = p.parse_args()
 
     if args.harvest:
-        if not C.should_fetch():
-            print("[harvest] skipped (offline toggle is ON)")
-            return
         run_harvest()
-    else:
+    elif args.daily:
         run_daily()
+    else:
+        # default to daily
+        run_daily()
+
 
 if __name__ == "__main__":
     main()
