@@ -121,25 +121,44 @@ def get_review_snippets_safe(appid: int, max_items: int = REVIEWS_SNIPPET_CAP) -
 _NSFW_HINTS = ("adult", "sexual", "nudity", "nsfw")
 
 
+def _to_int(x, default=0):
+    try:
+        return int(x)
+    except Exception:
+        return default
+
 def _is_nsfw(data: Dict[str, Any]) -> bool:
-    """Heuristics for adult/NSFW content based on Steam fields."""
+    """Heuristics for adult/NSFW content based on Steam fields, robust to string/None values."""
     if not data:
         return False
-    # Required age
-    if (data.get("required_age") or 0) >= 18:
+
+    # required_age can be "0", "18", 0, 18, or None
+    if _to_int(data.get("required_age"), 0) >= 18:
         return True
-    # content_descriptors
-    cd = (data.get("content_descriptors") or {}).get("notes", "") or ""
-    cd_ids = (data.get("content_descriptors") or {}).get("ids") or []
-    if isinstance(cd, str) and any(k in cd.lower() for k in _NSFW_HINTS):
+
+    # content_descriptors: notes (string) + ids (list[int|str])
+    cd = (data.get("content_descriptors") or {})
+    notes = (cd.get("notes") or "")
+    if isinstance(notes, str) and any(k in notes.lower() for k in _NSFW_HINTS):
         return True
-    if any(int(x) in (1, 2, 3, 4) for x in cd_ids):  # Steam uses 1–4 for adult content flags
+
+    ids = cd.get("ids") or []
+    # Protect against strings: ["1","2"] etc.
+    try:
+        id_ints = {_to_int(i) for i in ids}
+    except Exception:
+        id_ints = set()
+    # Steam commonly uses 1–4 for adult content flags
+    if any(i in id_ints for i in (1, 2, 3, 4)):
         return True
-    # adult_content_description (free text)
-    acd = (data.get("adult_content_description") or "") or ""
+
+    # adult_content_description may be a string
+    acd = (data.get("adult_content_description") or "")
     if isinstance(acd, str) and any(k in acd.lower() for k in _NSFW_HINTS):
         return True
+
     return False
+
 
 
 def _is_viable_game(data: Dict[str, Any]) -> bool:
