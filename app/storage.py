@@ -12,6 +12,10 @@ from datetime import datetime, timezone
 DATA_DIR = Path("content/data")
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
+# Back-compat aliases for old code that expects these names
+CANDIDATE_POOL_PATH = POOL_PATH
+CANDIDATE_POOL_META_PATH = POOL_META_PATH
+
 # Default file locations
 POOL_PATH       = DATA_DIR / "candidate_pool.json"
 POOL_META_PATH  = DATA_DIR / "pool_meta.json"
