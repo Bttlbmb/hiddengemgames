@@ -280,25 +280,20 @@ def build_candidate_pool(
     batch_size: Optional[int] = None,
     wait_s: Optional[float] = None,
 ) -> List[int]:
-    """
-    Build a list of promising appids using a sampled subset of the applist.
-    Uses caching + two-phase filtering to keep API calls low.
-
-    Phase 1: get_appdetails(appid) -> _is_viable_game / NSFW filter
-    Phase 2: get_review_summary_safe(appid) for survivors up to POOL_SUMMARY_CAP
-    """
     if not apps:
         return []
 
-    # Back-compat: prefer `sample_size` over legacy `cap` when provided
+    # Prefer `sample_size` over legacy `cap` when provided
     effective_cap = sample_size if (sample_size is not None) else cap
     cap_val = int(effective_cap or POOL_SAMPLE_CAP)
+
+    # Random sample, then limit to a small chunk per run
     sample = random.sample(apps, k=min(cap_val, len(apps)))
-    # Only process a small chunk per run to avoid bursts & let cache accumulate.
     chunk = int(batch_size or HARVEST_CHUNK)
     sample = sample[:min(chunk, len(sample))]
 
     pool: List[int] = []
+    viable_ids: List[int] = []        # <- keep viable survivors for fallback
     checked_summaries = 0
 
     for idx, app in enumerate(sample, 1):
@@ -307,28 +302,41 @@ def build_candidate_pool(
             continue
 
         # Details (cached)
-        data = get_appdetails(appid)
-        if not _is_viable_game(data or {}):
+        details = get_appdetails(appid)
+
+        # UNWRAP the appdetails response before applying filters
+        ok, payload = _unwrap_details(details or {})
+        if not ok:
             continue
-        if block_nsfw and _is_nsfw(data or {}):
+
+        # Quick filters
+        if not _is_viable_game(payload):
             continue
+        if block_nsfw and _is_nsfw(payload):
+            continue
+
+        # Keep track of viable survivors regardless of review threshold
+        viable_ids.append(int(appid))
 
         # Only fetch summary for survivors, capped
         if checked_summaries < POOL_SUMMARY_CAP:
-            ok, _summary = _passes_review_threshold_cached(appid, min_reviews)
+            passed, _summary = _passes_review_threshold_cached(appid, min_reviews)
             checked_summaries += 1
-            if ok:
+            if passed:
                 pool.append(int(appid))
-        else:
-            # cap reached; still add viable items (they passed basic viability)
-            pool.append(int(appid))
 
         # Gentle pacing every N items
         if idx % 40 == 0:
             time.sleep(float(wait_s) if (wait_s is not None) else 0.8)
 
+    # Cold-start fallback: if nothing passed the review threshold in this small batch,
+    # return the viable survivors so the pool is not empty.
+    if not pool and viable_ids:
+        pool = viable_ids[: min(100, len(viable_ids))]
+
     random.shuffle(pool)
     return pool
+
 
 
 # ---------- Daily picker ----------
