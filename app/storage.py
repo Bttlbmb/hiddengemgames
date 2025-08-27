@@ -10,7 +10,8 @@ from datetime import datetime, timezone
 
 # Base data dir used by the project
 DATA_DIR = Path("content/data")
-DATA_DIR.mkdir(parents=True, exist_ok=True)
+POOL_PATH = DATA_DIR / "candidate_pool.json"
+POOL_META_PATH = DATA_DIR / "candidate_pool_meta.json"
 
 # Back-compat aliases for old code that expects these names
 CANDIDATE_POOL_PATH = POOL_PATH
