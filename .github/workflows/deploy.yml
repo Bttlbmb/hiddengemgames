@@ -3,7 +3,7 @@ name: Generate daily post
 on:
   workflow_dispatch:
   schedule:
-    # Run every day at 07:00 UTC (adjust if you want)
+    # Run every day at 07:00 UTC (adjust as you like)
     - cron: "0 7 * * *"
 
 permissions:
@@ -17,6 +17,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0          # so we can pull/rebase before pushing
           persist-credentials: true
 
       - name: Set up Python
@@ -29,8 +30,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Ensures the file content/data/candidate_pool.json exists.
-      # If it's missing (fresh runner or weekly job didn't commit), we run a quick harvest first.
+      # Build the candidate pool if it's missing on a fresh runner
       - name: Ensure candidate pool (quick harvest if missing)
         run: |
           set -euxo pipefail
@@ -54,7 +54,12 @@ jobs:
         run: |
           python -m app.main --daily
 
-      # Optional: commit any generated/updated files (posts, data, etc.)
+      # Optional: show what changed (handy for debugging)
+      - name: Show changed files (debug)
+        run: |
+          git status --porcelain || true
+          ls -la content/posts || true
+
       - name: Commit & push updates (if any)
         run: |
           set -euxo pipefail
@@ -62,7 +67,9 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           if ! git diff --quiet; then
             git add -A
-            git commit -m "chore(daily): update generated content [skip ci]"
+            git commit -m "chore(daily): update generated content"
+            # Rebase to avoid non-fast-forward errors on busy repos
+            git pull --rebase origin "${GITHUB_REF_NAME}"
             git push
           else
             echo "No changes to commit."
