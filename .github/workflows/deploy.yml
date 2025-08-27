@@ -3,7 +3,7 @@ name: Generate daily post
 on:
   workflow_dispatch:
   schedule:
-    # Run every day at 07:00 UTC (adjust as you like)
+    # Run every day at 07:00 UTC (adjust as needed)
     - cron: "0 7 * * *"
 
 permissions:
@@ -17,7 +17,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0          # so we can pull/rebase before pushing
+          fetch-depth: 0
           persist-credentials: true
 
       - name: Set up Python
@@ -30,7 +30,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Build the candidate pool if it's missing on a fresh runner
+      # Ensure candidate pool exists (build if missing)
       - name: Ensure candidate pool (quick harvest if missing)
         run: |
           set -euxo pipefail
@@ -54,23 +54,36 @@ jobs:
         run: |
           python -m app.main --daily
 
+      # <- NEW: always touch a tiny stamp file so there is a change to commit
+      - name: Write run stamp (forces a commit)
+        run: |
+          mkdir -p content/data
+          date -u +"%Y-%m-%dT%H:%M:%SZ" > content/data/.daily-last-run.txt
+
       # Optional: show what changed (handy for debugging)
       - name: Show changed files (debug)
         run: |
           git status --porcelain || true
           ls -la content/posts || true
+          ls -la content/data || true
 
       - name: Commit & push updates (if any)
         run: |
           set -euxo pipefail
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          if ! git diff --quiet; then
-            git add -A
+
+          # Stage everything (post, data, stamp)
+          git add -A
+
+          # If there are staged changes, commit them; otherwise make a tiny empty commit
+          if ! git diff --cached --quiet; then
             git commit -m "chore(daily): update generated content"
-            # Rebase to avoid non-fast-forward errors on busy repos
-            git pull --rebase origin "${GITHUB_REF_NAME}"
-            git push
           else
-            echo "No changes to commit."
+            echo "No file diffs detected — creating an empty commit to trigger deploy."
+            git commit --allow-empty -m "chore(daily): trigger deploy"
           fi
+
+          # Rebase to avoid non-fast-forward push issues, then push
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push
