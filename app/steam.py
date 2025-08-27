@@ -410,31 +410,32 @@ def pick_from_pool(
     """
     Pick an appid from a harvested pool (daily choice).
     - pool can be a list[int], list[dict], or a dict with items:[]
-    - optionally exclude a few already-used ids
-    - weighted toward smaller-but-viable titles if use_weights=True
+    - exclude: appids to avoid this run (best effort; if it empties the pool we ignore it)
     """
-    exclude = set(exclude or [])
-    weight_map = {}
+    # Normalize the pool into a list of appids
+    normalized = _normalize_pool_to_appids(pool)
+    if not normalized:
+        raise ValueError("Candidate pool empty after normalization.")
 
+    # Apply exclusion but don't let it empty the pool
+    exclude_set = set(exclude or [])
+    candidates = [aid for aid in normalized if aid not in exclude_set]
+    if not candidates:
+        # All candidates were excluded; fall back to using the full pool
+        # so the daily job still produces a post instead of failing.
+        candidates = normalized
+
+    # Optionally compute weights (cheap: only for the first 500 candidates)
+    weight_map = {}
     if use_weights:
-        # Try to compute weights for many items, but keep it cheap
-        for aid in _normalize_pool_to_appids(pool)[:500]:
-            if aid in exclude:
-                continue
+        for aid in candidates[:500]:
             weight_map[aid] = _weight_for_app(aid)
 
-    # Normalize and drop excluded
-    seen = set(exclude)
-    appids = [aid for aid in _normalize_pool_to_appids(pool) if aid not in seen]
-    if not appids:
-        raise ValueError("Candidate pool empty after normalization (or all excluded by 'seen').")
-
-    # Weighted pick if we have weights for most items and it's enabled
     if use_weights and weight_map:
-        weights = [weight_map.get(aid, 0.01) for aid in appids]
-        # python's random.choices works with sequences and weights
+        weights = [weight_map.get(aid, 0.01) for aid in candidates]
         import random
-        return random.choices(appids, weights=weights, k=1)[0]
+        return random.choices(candidates, weights=weights, k=1)[0]
 
-    # Fallback: uniform
-    return rng.choice(appids)
+    # Fallback: uniform pick
+    return rng.choice(candidates)
+
