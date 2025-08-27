@@ -26,10 +26,21 @@ jobs:
   weekly-harvest:
     name: Weekly harvest (refresh candidate pool)
     runs-on: ubuntu-latest
+    # Runs on push / manual; and on the Sunday 04:30 schedule
     if: |
       github.event_name == 'workflow_dispatch' ||
       github.event_name == 'push' ||
       (github.event_name == 'schedule' && github.event.schedule == '30 4 * * 0')
+    # Steam safety / caching knobs for the harvest job
+    env:
+      HGG_MAX_REQ_PER_MIN: "12"    # stay well under any burst limits
+      HGG_HARVEST_CHUNK:   "50"    # process a small slice each run
+      HGG_POOL_SAMPLE_CAP: "300"   # sample this many appids before chunking
+      HGG_POOL_SUMMARY_CAP:"120"   # hard cap on review-summaries per run
+      HGG_STEAM_RETRIES:   "3"     # 429/5xx retries
+      HGG_STEAM_PAUSE:     "0.3"   # small pause after successful request
+      HGG_DETAILS_TTL:     "604800" # 7 days cache for appdetails
+      HGG_SUMMARY_TTL:     "604800" # 7 days cache for review summaries
     steps:
       - uses: actions/checkout@v4
         with:
@@ -73,10 +84,21 @@ jobs:
     name: Daily pick (post) + Pelican build + Deploy Pages
     runs-on: ubuntu-latest
     needs: weekly-harvest
+    # Runs on push / manual; and on the daily 05:00 schedule
     if: |
       github.event_name == 'workflow_dispatch' ||
       github.event_name == 'push' ||
       (github.event_name == 'schedule' && github.event.schedule == '0 5 * * *')
+    # Keep the same Steam knobs here, mostly harmless for daily job
+    env:
+      HGG_MAX_REQ_PER_MIN: "12"
+      HGG_HARVEST_CHUNK:   "50"
+      HGG_POOL_SAMPLE_CAP: "300"
+      HGG_POOL_SUMMARY_CAP:"120"
+      HGG_STEAM_RETRIES:   "3"
+      HGG_STEAM_PAUSE:     "0.3"
+      HGG_DETAILS_TTL:     "604800"
+      HGG_SUMMARY_TTL:     "604800"
     steps:
       - uses: actions/checkout@v4
         with:
