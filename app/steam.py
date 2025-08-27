@@ -23,6 +23,7 @@ import os
 import json
 import time
 import random
+from random import SystemRandom
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Tuple
 from collections import deque
@@ -61,6 +62,7 @@ REVIEWSUM_DIR = Path("content/data/reviewsum")
 APPSTATS_DIR.mkdir(parents=True, exist_ok=True)
 REVIEWSUM_DIR.mkdir(parents=True, exist_ok=True)
 
+rng = SystemRandom()
 
 # ---------- Rate limiting / HTTP helpers ----------
 
@@ -329,14 +331,86 @@ def build_candidate_pool(
 
 # ---------- Daily picker ----------
 
-def pick_from_pool(pool: List[int]) -> Optional[Tuple[int, Dict[str, Any]]]:
-    """Choose a random id from the pool and fetch details for rendering."""
-    if not pool:
-        return None
-    tries = min(10, len(pool))
-    for _ in range(tries):
-        appid = int(random.choice(pool))
-        data = get_appdetails(appid)
-        if _is_viable_game(data or {}):
-            return appid, data  # type: ignore[return-value]
-    return None
+def _normalize_pool_to_appids(pool) -> list[int]:
+    """
+    Accepts:
+      - dict with 'candidates' / 'apps' / 'ids' / 'pool'
+      - list of appids
+      - list of dicts containing 'appid' or 'id'
+    Returns a clean list[int] of appids (duplicates removed, invalid skipped).
+    """
+    items = []
+    if isinstance(pool, dict):
+        items = (
+            pool.get("candidates")
+            or pool.get("apps")
+            or pool.get("ids")
+            or pool.get("pool")
+            or []
+        )
+    elif isinstance(pool, list):
+        items = pool
+    else:
+        items = []
+
+    appids: list[int] = []
+    seen = set()
+    for it in items:
+        if isinstance(it, dict):
+            raw = it.get("appid", it.get("id"))
+        else:
+            raw = it
+        try:
+            aid = int(raw)
+        except (TypeError, ValueError):
+            continue
+        if aid not in seen:
+            seen.add(aid)
+            appids.append(aid)
+    return appids
+
+
+def pick_from_pool(pool, seen: set[int] | None = None, use_weights: bool = True) -> int:
+    """
+    Pick one appid from a cached candidate pool.
+    - `pool` may be dict/list; we normalize it.
+    - `seen` can exclude recent picks.
+    - If `use_weights` and items are dicts with `gemscore`, bias toward higher score.
+    """
+    seen = seen or set()
+
+    # If pool is dict-of-dicts and you want weighting, extract scores in parallel
+    weight_map: dict[int, float] = {}
+    if isinstance(pool, dict):
+        raw_items = (
+            pool.get("candidates")
+            or pool.get("apps")
+            or pool.get("ids")
+            or pool.get("pool")
+            or []
+        )
+        for it in raw_items:
+            if isinstance(it, dict):
+                raw = it.get("appid", it.get("id"))
+                try:
+                    aid = int(raw)
+                except (TypeError, ValueError):
+                    continue
+                if "gemscore" in it:
+                    # tiny floor to keep non-zero probability
+                    weight_map[aid] = max(float(it.get("gemscore", 0.0)), 0.01)
+
+    appids = [aid for aid in _normalize_pool_to_appids(pool) if aid not in seen]
+    if not appids:
+        raise ValueError("Candidate pool empty after normalization (or all excluded by 'seen').")
+
+    # Weighted pick if we have weights for most items and it's enabled
+    if use_weights and weight_map:
+        weights = [weight_map.get(aid, 0.01) for aid in appids]
+        # python's random.choices works with sequences and weights
+        import random
+        return random.choices(appids, weights=weights, k=1)[0]
+
+    # Fallback: uniform
+    return rng.choice(appids)
+
