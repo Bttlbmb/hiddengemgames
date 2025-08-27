@@ -1,0 +1,128 @@
+{
+"type": "dlc",
+"name": "My Lovely Girls - Artbook 18+",
+"steam_appid": 1859530,
+"required_age": 0,
+"is_free": false,
+"detailed_description": "In this DLC you will find 70 wallpapers from the game. They are in the artbook folder in the folder with the game, including those that were not included in the original version. Enjoy",
+"about_the_game": "In this DLC you will find 70 wallpapers from the game. They are in the artbook folder in the folder with the game, including those that were not included in the original version. Enjoy",
+"short_description": "In this DLC you will find 70 wallpapers from the game. They are in the artbook folder in the folder with the game, including those that were not included in the original version. Enjoy",
+"fullgame": {
+"appid": "1844280",
+"name": "My Lovely Girls"
+},
+"supported_languages": "English",
+"header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1859530/header.jpg?t=1642610979",
+"capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1859530/capsule_231x87.jpg?t=1642610979",
+"capsule_imagev5": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1859530/capsule_184x69.jpg?t=1642610979",
+"website": null,
+"pc_requirements": {
+"minimum": "<strong>Minimum:</strong><br><ul class=\"bb_ul\"><li><strong>OS *:</strong> Windows 10, Windows 8, Windows 7 32-bit<br></li><li><strong>Processor:</strong> Quad-core Intel or AMD processor, 2 GHz or faster<br></li><li><strong>Memory:</strong> 2 GB RAM<br></li><li><strong>Graphics:</strong> 1 Gb<br></li><li><strong>DirectX:</strong> Version 10<br></li><li><strong>Storage:</strong> 1 GB available space</li></ul>",
+"recommended": "<strong>Recommended:</strong><br><ul class=\"bb_ul\"><li><strong>OS *:</strong> Windows 10, Windows 8, Windows 7 32-bit<br></li><li><strong>Processor:</strong> Quad-core Intel or AMD processor, 2.5 GHz or faster<br></li><li><strong>Memory:</strong> 4 GB RAM<br></li><li><strong>Graphics:</strong> 2 Gb<br></li><li><strong>DirectX:</strong> Version 11<br></li><li><strong>Storage:</strong> 1 GB available space</li></ul>"
+},
+"mac_requirements": [],
+"linux_requirements": [],
+"developers": [
+"Kotovodk Studio"
+],
+"publishers": [
+"Kotovodk Studio"
+],
+"price_overview": {
+"currency": "EUR",
+"initial": 99,
+"final": 49,
+"discount_percent": 51,
+"initial_formatted": "0,99€",
+"final_formatted": "0,49€"
+},
+"packages": [
+669127
+],
+"package_groups": [
+{
+"name": "default",
+"title": "Buy My Lovely Girls - Artbook 18+",
+"description": "",
+"selection_text": "Select a purchase option",
+"save_text": "",
+"display_type": 0,
+"is_recurring_subscription": "false",
+"subs": [
+{
+"packageid": 669127,
+"percent_savings_text": "-51% ",
+"percent_savings": 0,
+"option_text": "My Lovely Girls - Artbook 18+ - <span class=\"discount_original_price\">0,99€</span> 0,49€",
+"option_description": "",
+"can_get_free_license": "0",
+"is_free_license": false,
+"price_in_cents_with_discount": 49
+}
+]
+}
+],
+"platforms": {
+"windows": true,
+"mac": false,
+"linux": false
+},
+"categories": [
+{
+"id": 2,
+"description": "Single-player"
+},
+{
+"id": 21,
+"description": "Downloadable Content"
+},
+{
+"id": 62,
+"description": "Family Sharing"
+}
+],
+"genres": [
+{
+"id": "4",
+"description": "Casual"
+},
+{
+"id": "23",
+"description": "Indie"
+}
+],
+"screenshots": [
+{
+"id": 0,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1859530/ss_7bde1e7dc9c4a33ae7e35c0cde4aa8cadd59aae3.600x338.jpg?t=1642610979",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1859530/ss_7bde1e7dc9c4a33ae7e35c0cde4aa8cadd59aae3.1920x1080.jpg?t=1642610979"
+}
+],
+"release_date": {
+"coming_soon": false,
+"date": "19 Jan, 2022"
+},
+"support_info": {
+"url": "",
+"email": "KotovodK@yandex.ru"
+},
+"background": "https://store.akamai.steamstatic.com/images/storepagebackground/app/1859530?t=1642610979",
+"background_raw": "https://store.akamai.steamstatic.com/images/storepagebackground/app/1859530?t=1642610979",
+"content_descriptors": {
+"ids": [
+1,
+3,
+5,
+4
+],
+"notes": "Nakedness.\r\nAll characters appearing in this game are over 18 years of age."
+},
+"ratings": {
+"dejus": {
+"rating": "18",
+"descriptors": "Sexo Explícito",
+"use_age_gate": "true",
+"required_age": "18"
+}
+}
+}

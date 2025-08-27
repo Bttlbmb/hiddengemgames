@@ -1,0 +1,147 @@
+{
+"type": "dlc",
+"name": "Last Fantasy Hentai jigsaw",
+"steam_appid": 1824030,
+"required_age": 0,
+"is_free": false,
+"detailed_description": "Last Fantasy Hentai Jigsaw explores more deeply the lore of the main game.<br />\r\n It tells a bit of the story of the young master who will become king by marrying Yuki Natsume the current queen. <br />\r\nYou will have the opportunity to get to know a piece of history while challenging small puzzles and undressing the main character.",
+"about_the_game": "Last Fantasy Hentai Jigsaw explores more deeply the lore of the main game.<br />\r\n It tells a bit of the story of the young master who will become king by marrying Yuki Natsume the current queen. <br />\r\nYou will have the opportunity to get to know a piece of history while challenging small puzzles and undressing the main character.",
+"short_description": "Last Fantasy Hentai Jigsaw explores more deeply the lore of the main game.",
+"fullgame": {
+"appid": "1263780",
+"name": "Last Fantasy Hentai"
+},
+"supported_languages": "English",
+"header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1824030/header.jpg?t=1637930904",
+"capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1824030/capsule_231x87.jpg?t=1637930904",
+"capsule_imagev5": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1824030/capsule_184x69.jpg?t=1637930904",
+"website": null,
+"pc_requirements": {
+"minimum": "<strong>Minimum:</strong><br><ul class=\"bb_ul\"><li>Requires a 64-bit processor and operating system<br></li><li><strong>OS *:</strong> Windows XP/Vista/7/8/10/11<br></li><li><strong>Processor:</strong> 1.5Ghz Processor or better<br></li><li><strong>Memory:</strong> 2 MB RAM<br></li><li><strong>Graphics:</strong> Integrated Graphics Chip<br></li><li><strong>Storage:</strong> 200 MB available space<br></li><li><strong>Sound Card:</strong> yes</li></ul>",
+"recommended": "<strong>Recommended:</strong><br><ul class=\"bb_ul\"><li>Requires a 64-bit processor and operating system</li></ul>"
+},
+"mac_requirements": {
+"minimum": "<strong>Minimum:</strong><br><ul class=\"bb_ul\"></ul>",
+"recommended": "<strong>Recommended:</strong><br><ul class=\"bb_ul\"></ul>"
+},
+"linux_requirements": {
+"minimum": "<strong>Minimum:</strong><br><ul class=\"bb_ul\"></ul>",
+"recommended": "<strong>Recommended:</strong><br><ul class=\"bb_ul\"></ul>"
+},
+"legal_notice": "Last Fantasy Hentai Jigsaw -  By Red King All Rights reserved.",
+"developers": [
+"Red King"
+],
+"publishers": [
+"Red King "
+],
+"price_overview": {
+"currency": "EUR",
+"initial": 79,
+"final": 79,
+"discount_percent": 0,
+"initial_formatted": "",
+"final_formatted": "0,79€"
+},
+"packages": [
+655915
+],
+"package_groups": [
+{
+"name": "default",
+"title": "Buy Last Fantasy Hentai jigsaw",
+"description": "",
+"selection_text": "Select a purchase option",
+"save_text": "",
+"display_type": 0,
+"is_recurring_subscription": "false",
+"subs": [
+{
+"packageid": 655915,
+"percent_savings_text": " ",
+"percent_savings": 0,
+"option_text": "Last Fantasy Hentai jigsaw - 0,79€",
+"option_description": "",
+"can_get_free_license": "0",
+"is_free_license": false,
+"price_in_cents_with_discount": 79
+}
+]
+}
+],
+"platforms": {
+"windows": true,
+"mac": false,
+"linux": false
+},
+"categories": [
+{
+"id": 2,
+"description": "Single-player"
+},
+{
+"id": 21,
+"description": "Downloadable Content"
+},
+{
+"id": 22,
+"description": "Steam Achievements"
+},
+{
+"id": 13,
+"description": "Captions available"
+},
+{
+"id": 23,
+"description": "Steam Cloud"
+},
+{
+"id": 62,
+"description": "Family Sharing"
+}
+],
+"genres": [
+{
+"id": "4",
+"description": "Casual"
+},
+{
+"id": "23",
+"description": "Indie"
+}
+],
+"screenshots": [
+{
+"id": 0,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1824030/ss_b0da14a78e9405eecda623de3c3104ff44b4e67b.600x338.jpg?t=1637930904",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1824030/ss_b0da14a78e9405eecda623de3c3104ff44b4e67b.1920x1080.jpg?t=1637930904"
+}
+],
+"release_date": {
+"coming_soon": false,
+"date": "26 Nov, 2021"
+},
+"support_info": {
+"url": "https://www.facebook.com/RED13INDIE/",
+"email": "hello.rxiii@gmail.com"
+},
+"background": "https://store.akamai.steamstatic.com/images/storepagebackground/app/1824030?t=1637930904",
+"background_raw": "https://store.akamai.steamstatic.com/images/storepagebackground/app/1824030?t=1637930904",
+"content_descriptors": {
+"ids": [
+1,
+3,
+5,
+4
+],
+"notes": "This game may contain content not suitable for all ages or for viewing at work: Nudity or sexual content, Non-specific adult content"
+},
+"ratings": {
+"dejus": {
+"rating": "18",
+"descriptors": "Medo\r\nLinguagem imprópria\r\nConteúdo sexual\r\nNudez\r\nSexo Explícito",
+"use_age_gate": "true",
+"required_age": "18"
+}
+}
+}

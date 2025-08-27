@@ -1,0 +1,73 @@
+{
+"type": "music",
+"name": "L'Etranger - Original Soundtrack",
+"steam_appid": 1887970,
+"required_age": 0,
+"is_free": true,
+"detailed_description": "局外人 L'Etranger - Original Soundtrack",
+"about_the_game": "局外人 L'Etranger - Original Soundtrack",
+"short_description": "局外人 L'Etranger - Original Soundtrack",
+"fullgame": {
+"appid": "1078970",
+"name": "局外人 L'Etranger"
+},
+"supported_languages": "Simplified Chinese, Traditional Chinese",
+"header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1887970/header.jpg?t=1645026569",
+"capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1887970/capsule_231x87.jpg?t=1645026569",
+"capsule_imagev5": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1887970/capsule_184x69.jpg?t=1645026569",
+"website": "https://class-two.com",
+"pc_requirements": [],
+"mac_requirements": [],
+"linux_requirements": [],
+"legal_notice": "Copyright © 2018-2022 Class-2",
+"developers": [
+"Class-2"
+],
+"publishers": [
+"Class-2"
+],
+"package_groups": [],
+"platforms": {
+"windows": true,
+"mac": true,
+"linux": false
+},
+"categories": [
+{
+"id": 2,
+"description": "Single-player"
+}
+],
+"genres": [
+{
+"id": "23",
+"description": "Indie"
+}
+],
+"screenshots": [
+{
+"id": 0,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1887970/ss_fb9b38cbdf0637862ff25783f47bcf1e151f4547.600x338.jpg?t=1645026569",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1887970/ss_fb9b38cbdf0637862ff25783f47bcf1e151f4547.1920x1080.jpg?t=1645026569"
+}
+],
+"release_date": {
+"coming_soon": false,
+"date": "14 Feb, 2022"
+},
+"support_info": {
+"url": "https://class-two.com",
+"email": "masatohshi.hayashi@gmail.com"
+},
+"background": "https://store.akamai.steamstatic.com/images/storepagebackground/app/1887970?t=1645026569",
+"background_raw": "https://store.akamai.steamstatic.com/images/storepagebackground/app/1887970?t=1645026569",
+"content_descriptors": {
+"ids": [],
+"notes": null
+},
+"ratings": {
+"dejus": {
+"rating": "l"
+}
+}
+}

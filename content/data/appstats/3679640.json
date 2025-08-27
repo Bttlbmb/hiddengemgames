@@ -1,0 +1,142 @@
+{
+"type": "dlc",
+"name": "汉武大帝传-备用定制DLC1",
+"steam_appid": 3679640,
+"required_age": 0,
+"is_free": false,
+"detailed_description": "<p class=\"bb_paragraph\" ><strong>该DLC包含</strong> ：定制装备3件+消耗品若干，具体明细见下方：</p><p class=\"bb_paragraph\" ></p><p class=\"bb_paragraph\" >神·斩蛟灵剑</p><p class=\"bb_paragraph\" >SVIP断桥浮云专属定制武器，斩蛟灵剑是道教四大天师之许逊的兵器，此神剑“指天天裂，指地地坼，指星辰则失度，指江河则逆流，万邪不敢当，神圣之宝也。</p><p class=\"bb_paragraph\" >附加特技：法术暴击150%、法术伤害增强60%、法术双击100%、精神加33%；</p><p class=\"bb_paragraph\" > </p><p class=\"bb_paragraph\" >衣服：</p><p class=\"bb_paragraph\" > </p><p class=\"bb_paragraph\" >神·太虚神甲  </p><p class=\"bb_paragraph\" > SVIP断桥浮云专属定制护甲，十大神器之首，盘古始祖开天辟地之时以天地的胎膜所制，也是唯一一件能抵挡开天斧的神器。</p><p class=\"bb_paragraph\" >附加特技：大海啸、一夫当关30%、法术必中、无视能力25%；</p><p class=\"bb_paragraph\" > </p><p class=\"bb_paragraph\" >辅助：</p><p class=\"bb_paragraph\" > </p><p class=\"bb_paragraph\" >神·炼妖壶</p><p class=\"bb_paragraph\" >SVIP断桥浮云专属定制饰品，炼妖壶也叫九黎壶，能炼化万物。相传最早为九黎族酋长蚩尤所拥有，乃上古异宝之一。能够造就一切万物，也有惊人之毁坏力量。</p><p class=\"bb_paragraph\" >附加特技：真伤10%、破盾、每回合回复状态、二次行动。</p><p class=\"bb_paragraph\" ></p><p class=\"bb_paragraph\" >额外赠送消耗品        5种10点属性的丸子各<strong>10个</strong></p><p class=\"bb_paragraph\" ></p><p class=\"bb_paragraph\" >注：如果您购买了却未领取到此DLC，请进入到Steam汉武大帝传“开始游戏”界面，界面右下方有一个管理我的DLC，去掉其他所有勾选仅保留此DLC和内容追加包DLC的钩子即可进游戏“元宝商城”点击购买领取，领到后再勾上其他的DLC。只需操作一次，成功后所有存档永久有效。</p>",
+"about_the_game": "<p class=\"bb_paragraph\" ><strong>该DLC包含</strong> ：定制装备3件+消耗品若干，具体明细见下方：</p><p class=\"bb_paragraph\" ></p><p class=\"bb_paragraph\" >神·斩蛟灵剑</p><p class=\"bb_paragraph\" >SVIP断桥浮云专属定制武器，斩蛟灵剑是道教四大天师之许逊的兵器，此神剑“指天天裂，指地地坼，指星辰则失度，指江河则逆流，万邪不敢当，神圣之宝也。</p><p class=\"bb_paragraph\" >附加特技：法术暴击150%、法术伤害增强60%、法术双击100%、精神加33%；</p><p class=\"bb_paragraph\" > </p><p class=\"bb_paragraph\" >衣服：</p><p class=\"bb_paragraph\" > </p><p class=\"bb_paragraph\" >神·太虚神甲  </p><p class=\"bb_paragraph\" > SVIP断桥浮云专属定制护甲，十大神器之首，盘古始祖开天辟地之时以天地的胎膜所制，也是唯一一件能抵挡开天斧的神器。</p><p class=\"bb_paragraph\" >附加特技：大海啸、一夫当关30%、法术必中、无视能力25%；</p><p class=\"bb_paragraph\" > </p><p class=\"bb_paragraph\" >辅助：</p><p class=\"bb_paragraph\" > </p><p class=\"bb_paragraph\" >神·炼妖壶</p><p class=\"bb_paragraph\" >SVIP断桥浮云专属定制饰品，炼妖壶也叫九黎壶，能炼化万物。相传最早为九黎族酋长蚩尤所拥有，乃上古异宝之一。能够造就一切万物，也有惊人之毁坏力量。</p><p class=\"bb_paragraph\" >附加特技：真伤10%、破盾、每回合回复状态、二次行动。</p><p class=\"bb_paragraph\" ></p><p class=\"bb_paragraph\" >额外赠送消耗品        5种10点属性的丸子各<strong>10个</strong></p><p class=\"bb_paragraph\" ></p><p class=\"bb_paragraph\" >注：如果您购买了却未领取到此DLC，请进入到Steam汉武大帝传“开始游戏”界面，界面右下方有一个管理我的DLC，去掉其他所有勾选仅保留此DLC和内容追加包DLC的钩子即可进游戏“元宝商城”点击购买领取，领到后再勾上其他的DLC。只需操作一次，成功后所有存档永久有效。</p>",
+"short_description": "该DLC用于奖励在游戏中做出过卓越贡献的玩家，他们有的反馈了重大BUG，有的提供并被采纳了非常好的建议，为社区活跃贡献了重大力量，又或者为游戏推广付出了巨大努力的忠实粉丝，为了回馈这些玩家做出的贡献，开发组设立此DLC用于奖励他们。 该DLC包含武将1名，装备3件，消耗品若干。 武将包含5个特技，2个主动法术  类似轩辕剑，盘古虚空 装备3件，每件包含4个特技，共计12个特技，可以选择一夫当关30%，二动，破盾，唯我独尊 等超级技能",
+"fullgame": {
+"appid": "1311700",
+"name": "汉武大帝传-经典策略战棋"
+},
+"supported_languages": "Simplified Chinese<strong>*</strong>, Traditional Chinese<strong>*</strong><br><strong>*</strong>languages with full audio support",
+"header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3679640/c7c7489245aab85526e00800e3cef383b62a132b/header.jpg?t=1751211999",
+"capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3679640/3922530b6f9107e613f2e2f7cb52daa507c28441/capsule_231x87.jpg?t=1751211999",
+"capsule_imagev5": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3679640/3922530b6f9107e613f2e2f7cb52daa507c28441/capsule_184x69.jpg?t=1751211999",
+"website": null,
+"pc_requirements": [],
+"mac_requirements": [],
+"linux_requirements": [],
+"developers": [
+"只做一款战棋工作室"
+],
+"publishers": [
+"只做一款战棋工作室"
+],
+"price_overview": {
+"currency": "EUR",
+"initial": 89000,
+"final": 89000,
+"discount_percent": 0,
+"initial_formatted": "",
+"final_formatted": "890,--€"
+},
+"packages": [
+1296069
+],
+"package_groups": [
+{
+"name": "default",
+"title": "Buy 汉武大帝传-备用定制DLC1",
+"description": "",
+"selection_text": "Select a purchase option",
+"save_text": "",
+"display_type": 0,
+"is_recurring_subscription": "false",
+"subs": [
+{
+"packageid": 1296069,
+"percent_savings_text": " ",
+"percent_savings": 0,
+"option_text": "汉武大帝传-定制备用DLC1 - 890,--€",
+"option_description": "",
+"can_get_free_license": "0",
+"is_free_license": false,
+"price_in_cents_with_discount": 89000
+}
+]
+}
+],
+"platforms": {
+"windows": true,
+"mac": false,
+"linux": false
+},
+"categories": [
+{
+"id": 2,
+"description": "Single-player"
+},
+{
+"id": 21,
+"description": "Downloadable Content"
+},
+{
+"id": 62,
+"description": "Family Sharing"
+}
+],
+"genres": [
+{
+"id": "25",
+"description": "Adventure"
+},
+{
+"id": "23",
+"description": "Indie"
+},
+{
+"id": "3",
+"description": "RPG"
+},
+{
+"id": "28",
+"description": "Simulation"
+},
+{
+"id": "2",
+"description": "Strategy"
+}
+],
+"screenshots": [
+{
+"id": 0,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3679640/c1cc6d240eb1770495ae73a2e8fa0f59200885fe/ss_c1cc6d240eb1770495ae73a2e8fa0f59200885fe.600x338.jpg?t=1751211999",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3679640/c1cc6d240eb1770495ae73a2e8fa0f59200885fe/ss_c1cc6d240eb1770495ae73a2e8fa0f59200885fe.1920x1080.jpg?t=1751211999"
+}
+],
+"release_date": {
+"coming_soon": false,
+"date": "24 Apr, 2025"
+},
+"support_info": {
+"url": "",
+"email": "392788593@qq.com"
+},
+"background": "https://store.akamai.steamstatic.com/images/storepagebackground/app/3679640?t=1751211999",
+"background_raw": "https://store.akamai.steamstatic.com/images/storepagebackground/app/3679640?t=1751211999",
+"content_descriptors": {
+"ids": [],
+"notes": null
+},
+"ratings": {
+"dejus": {
+"rating_generated": "1",
+"rating": "10",
+"required_age": "10",
+"banned": "0",
+"use_age_gate": "0",
+"descriptors": "Violência"
+},
+"steam_germany": {
+"rating_generated": "1",
+"rating": "12",
+"required_age": "12",
+"banned": "0",
+"use_age_gate": "0",
+"descriptors": "Gewalt"
+}
+}
+}

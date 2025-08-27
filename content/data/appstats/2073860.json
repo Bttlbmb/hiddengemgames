@@ -1,0 +1,103 @@
+{
+"type": "demo",
+"name": "Code.Breaker() Demo",
+"steam_appid": 2073860,
+"required_age": 0,
+"is_free": true,
+"detailed_description": "<span class=\"bb_img_ctn\"><img class=\"bb_img\" src=\"https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/extras/skyline.gif?t=1657097910\" /></span><br><br>Code.Breaker() is a cyberpunk visual novel about technology, crime, and trying to survive in a world ruled by corporations.<h2 class=\"bb_tag\" >Setting</h2><span class=\"bb_img_ctn\"><img class=\"bb_img\" src=\"https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/extras/setting.gif?t=1657097910\" /></span><br><br>2083, Free City-State of Seattle. Augmentations are commonplace, most people at least having a brain-computer interface chipped in. Sentient Androids live amongst the population, together with genetically modified humans and cybernetically enhanced people.<br>The corporations fight with other corporations over their bottom line, both figuratively and literally, making it a hotspot for so-called “Ronin”. These “Ronin” are modern-day mercenaries doing the dirty work for anyone who can pay them, most of the time corporations.<h2 class=\"bb_tag\" >Story</h2><span class=\"bb_img_ctn\"><img class=\"bb_img\" src=\"https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/extras/story.gif?t=1657097910\" /></span><br><br>You take the role of a hacker working for Akiyama CyberTech as a “Network Security Expert”. Your job is to keep the Seattle branch office safe from outside intrusion and the network security of the building in shape. It’s a mostly ceremonial position to fulfill legally required human quotas, which you only got through nepotism. <br>In truth you were born without citizenship in the slums of Redmond and honed your skills in the underground hacking scene.<br><br>One day, you get an email from an anonymous sender who knows your secret, threatening the life you've built up.<br>Now it's up to you to take back control!<h2 class=\"bb_tag\" >Gameplay</h2><span class=\"bb_img_ctn\"><img class=\"bb_img\" src=\"https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/extras/characters.gif?t=1657097910\" /></span><br><br><ul class=\"bb_ul\"><li>Talk to colleagues and friends and make decisions that matter<br></li><li>Point and click on background items to get more information about your environment<br></li><li>Hack into systems by quickly solving puzzles<br></li><li>Play through a thrilling office story where you defend yourself from the shadows of your past</li></ul><br><span class=\"bb_img_ctn\"><img class=\"bb_img\" src=\"https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/extras/hacking.gif?t=1657097910\" /></span>",
+"about_the_game": "<span class=\"bb_img_ctn\"><img class=\"bb_img\" src=\"https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/extras/skyline.gif?t=1657097910\" /></span><br><br>Code.Breaker() is a cyberpunk visual novel about technology, crime, and trying to survive in a world ruled by corporations.<h2 class=\"bb_tag\" >Setting</h2><span class=\"bb_img_ctn\"><img class=\"bb_img\" src=\"https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/extras/setting.gif?t=1657097910\" /></span><br><br>2083, Free City-State of Seattle. Augmentations are commonplace, most people at least having a brain-computer interface chipped in. Sentient Androids live amongst the population, together with genetically modified humans and cybernetically enhanced people.<br>The corporations fight with other corporations over their bottom line, both figuratively and literally, making it a hotspot for so-called “Ronin”. These “Ronin” are modern-day mercenaries doing the dirty work for anyone who can pay them, most of the time corporations.<h2 class=\"bb_tag\" >Story</h2><span class=\"bb_img_ctn\"><img class=\"bb_img\" src=\"https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/extras/story.gif?t=1657097910\" /></span><br><br>You take the role of a hacker working for Akiyama CyberTech as a “Network Security Expert”. Your job is to keep the Seattle branch office safe from outside intrusion and the network security of the building in shape. It’s a mostly ceremonial position to fulfill legally required human quotas, which you only got through nepotism. <br>In truth you were born without citizenship in the slums of Redmond and honed your skills in the underground hacking scene.<br><br>One day, you get an email from an anonymous sender who knows your secret, threatening the life you've built up.<br>Now it's up to you to take back control!<h2 class=\"bb_tag\" >Gameplay</h2><span class=\"bb_img_ctn\"><img class=\"bb_img\" src=\"https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/extras/characters.gif?t=1657097910\" /></span><br><br><ul class=\"bb_ul\"><li>Talk to colleagues and friends and make decisions that matter<br></li><li>Point and click on background items to get more information about your environment<br></li><li>Hack into systems by quickly solving puzzles<br></li><li>Play through a thrilling office story where you defend yourself from the shadows of your past</li></ul><br><span class=\"bb_img_ctn\"><img class=\"bb_img\" src=\"https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/extras/hacking.gif?t=1657097910\" /></span>",
+"short_description": "Code.Breaker() is a cyberpunk visual novel about technology, cybercrime, and trying to survive in a world ruled by corporations. Hack your way out of your worst day at a job you´re not supposed to have.",
+"fullgame": {
+"appid": "1756550",
+"name": "Code.Breaker()"
+},
+"supported_languages": "English",
+"header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/header.jpg?t=1657097910",
+"capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/capsule_231x87.jpg?t=1657097910",
+"capsule_imagev5": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/capsule_184x69.jpg?t=1657097910",
+"website": "https://www.hokabentostudio.de",
+"pc_requirements": {
+"minimum": "<strong>Minimum:</strong><br><ul class=\"bb_ul\"><li><strong>OS:</strong> Windows<br></li><li><strong>Processor:</strong> 1.8 GHz Dual-Core CPU<br></li><li><strong>Memory:</strong> 2 GB RAM<br></li><li><strong>Graphics:</strong> Integrated Graphics<br></li><li><strong>Storage:</strong> 300 MB available space</li></ul>"
+},
+"mac_requirements": [],
+"linux_requirements": [],
+"developers": [
+"HokaBento Studio"
+],
+"publishers": [
+"HokaBento Studio GmbH"
+],
+"package_groups": [],
+"platforms": {
+"windows": true,
+"mac": false,
+"linux": false
+},
+"categories": [
+{
+"id": 2,
+"description": "Single-player"
+},
+{
+"id": 10,
+"description": "Game demo"
+},
+{
+"id": 18,
+"description": "Partial Controller Support"
+}
+],
+"screenshots": [
+{
+"id": 0,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/ss_ffc29de88591c5b292be29768217333cfc8d2dfc.600x338.jpg?t=1657097910",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/ss_ffc29de88591c5b292be29768217333cfc8d2dfc.1920x1080.jpg?t=1657097910"
+},
+{
+"id": 1,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/ss_2c3ff333ef43ea409b96c64418a45e1ea917ab93.600x338.jpg?t=1657097910",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/ss_2c3ff333ef43ea409b96c64418a45e1ea917ab93.1920x1080.jpg?t=1657097910"
+},
+{
+"id": 2,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/ss_4e550cc27ceb990e071116a532c304e5d498543c.600x338.jpg?t=1657097910",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/ss_4e550cc27ceb990e071116a532c304e5d498543c.1920x1080.jpg?t=1657097910"
+},
+{
+"id": 3,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/ss_16428469fcaa5c6bbac3429522f597e2714dff4a.600x338.jpg?t=1657097910",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/ss_16428469fcaa5c6bbac3429522f597e2714dff4a.1920x1080.jpg?t=1657097910"
+},
+{
+"id": 4,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/ss_8e08f3e6a217658256ff2219210b8cef80e74794.600x338.jpg?t=1657097910",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2073860/ss_8e08f3e6a217658256ff2219210b8cef80e74794.1920x1080.jpg?t=1657097910"
+}
+],
+"release_date": {
+"coming_soon": false,
+"date": "6 Jul, 2022"
+},
+"support_info": {
+"url": "hokabentostudio.de",
+"email": "contact@hokabentostudio.de"
+},
+"background": "https://store.akamai.steamstatic.com/images/storepagebackground/app/2073860?t=1657097910",
+"background_raw": "https://store.akamai.steamstatic.com/images/storepagebackground/app/2073860?t=1657097910",
+"content_descriptors": {
+"ids": [
+5
+],
+"notes": "Violence, sexual harassment, alcohol and drug use will be referenced in text form. They are mentioned by characters in the game that experienced one or more of these topics.\r\nThese topics are not depicted in an glorifying manner but instead be used to critically reflect on them."
+},
+"ratings": {
+"dejus": {
+"rating_generated": "1",
+"rating": "l",
+"required_age": "0",
+"banned": "0",
+"use_age_gate": "0",
+"descriptors": ""
+}
+}
+}

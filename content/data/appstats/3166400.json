@@ -1,0 +1,84 @@
+{
+"type": "demo",
+"name": "Astra Ignota Demo",
+"steam_appid": 3166400,
+"required_age": 0,
+"is_free": true,
+"detailed_description": "Color the whole board using symmetrical galaxies.<br>An innovative puzzle based on an idea from the authors of the Sudoku.<br><br>This demo contains:<br><ul class=\"bb_ul\"><li> 30 pleasant, hand-crafted levels, or infinite randomly-generated puzzles.<br></li><li> Difficulty ramps up from tutorials to devilish.<br></li><li> A touch of background story, uncovered chapter by chapter.<br></li><li> A soothing soundtrack.</li></ul><br>The full game contains:<br><ul class=\"bb_ul\"><li> More levels.<br></li><li> More story episodes.<br></li><li> More than 2h of gameplay.<br></li><li> More features, including the range filler and a level editor.<br></li><li> Steam achievements and stats</li></ul>",
+"about_the_game": "Color the whole board using symmetrical galaxies.<br>An innovative puzzle based on an idea from the authors of the Sudoku.<br><br>This demo contains:<br><ul class=\"bb_ul\"><li> 30 pleasant, hand-crafted levels, or infinite randomly-generated puzzles.<br></li><li> Difficulty ramps up from tutorials to devilish.<br></li><li> A touch of background story, uncovered chapter by chapter.<br></li><li> A soothing soundtrack.</li></ul><br>The full game contains:<br><ul class=\"bb_ul\"><li> More levels.<br></li><li> More story episodes.<br></li><li> More than 2h of gameplay.<br></li><li> More features, including the range filler and a level editor.<br></li><li> Steam achievements and stats</li></ul>",
+"short_description": "A relaxing, space-themed puzzle game where you fill a board using symmetrical figures. An idea originally from the authors of the Sudoku, much harder than it looks! All boards are hand-crafted for maximum enjoyment.",
+"fullgame": {
+"appid": "2666410",
+"name": "Astra Ignota"
+},
+"supported_languages": "English, Spanish - Spain, Japanese, Korean, Simplified Chinese, Ukrainian, Catalan",
+"header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3166400/header.jpg?t=1732530412",
+"capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3166400/7cdb1c419d3c4342c69360a5d7fa0817afc7c8ec/capsule_231x87.jpg?t=1732530412",
+"capsule_imagev5": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3166400/7cdb1c419d3c4342c69360a5d7fa0817afc7c8ec/capsule_184x69.jpg?t=1732530412",
+"website": "https://www.qojat.com/astraignota",
+"pc_requirements": [],
+"mac_requirements": [],
+"linux_requirements": [],
+"developers": [
+"Xavi Artigas"
+],
+"publishers": [
+"Xavi Artigas"
+],
+"package_groups": [],
+"platforms": {
+"windows": true,
+"mac": false,
+"linux": false
+},
+"categories": [
+{
+"id": 2,
+"description": "Single-player"
+},
+{
+"id": 10,
+"description": "Game demo"
+},
+{
+"id": 23,
+"description": "Steam Cloud"
+},
+{
+"id": 17,
+"description": "Includes level editor"
+}
+],
+"release_date": {
+"coming_soon": false,
+"date": "15 Sep, 2024"
+},
+"support_info": {
+"url": "https://www.qojat.com/astraignota",
+"email": "xavi@qojat.com"
+},
+"background": "https://store.akamai.steamstatic.com/images/storepagebackground/app/3166400?t=1732530412",
+"background_raw": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3166400/page_bg_raw.jpg?t=1732530412",
+"content_descriptors": {
+"ids": [],
+"notes": null
+},
+"ratings": {
+"dejus": {
+"rating_generated": "1",
+"rating": "l",
+"required_age": "0",
+"banned": "0",
+"use_age_gate": "0",
+"descriptors": ""
+},
+"steam_germany": {
+"rating_generated": "1",
+"rating": "0",
+"required_age": "0",
+"banned": "0",
+"use_age_gate": "0",
+"descriptors": ""
+}
+}
+}

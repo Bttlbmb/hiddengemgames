@@ -1,0 +1,103 @@
+{
+"type": "demo",
+"name": "Automobilista 2 Demo",
+"steam_appid": 1786210,
+"required_age": 0,
+"is_free": true,
+"detailed_description": "This Automobilista 2 Demo introduces the Volkswagen TSI Cup by Acelerados - a project developed in partnership with Volkswagen Brazil and the Acelerados TV show, bringing two Volkswagen street cars (the Polo &amp; Virtus TSI 1.0) along with the Velo città race track.",
+"about_the_game": "This Automobilista 2 Demo introduces the Volkswagen TSI Cup by Acelerados - a project developed in partnership with Volkswagen Brazil and the Acelerados TV show, bringing two Volkswagen street cars (the Polo &amp; Virtus TSI 1.0) along with the Velo città race track.",
+"short_description": "This Automobilista 2 Demo introduces the Volkswagen TSI Cup by Acelerados - a project developed in partnership with Volkswagen Brazil and the Acelerados TV show, bringing two Volkswagen street cars (the Polo &amp; Virtus TSI 1.0) along with the Velo città race track.",
+"fullgame": {
+"appid": "1066890",
+"name": "Automobilista 2"
+},
+"supported_languages": "English<strong>*</strong>, French, German, Spanish - Spain, Spanish - Latin America, Portuguese - Portugal, Portuguese - Brazil<br><strong>*</strong>languages with full audio support",
+"header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1786210/header.jpg?t=1637181592",
+"capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1786210/capsule_231x87.jpg?t=1637181592",
+"capsule_imagev5": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1786210/capsule_184x69.jpg?t=1637181592",
+"website": "https://www.game-automobilista2.com/",
+"pc_requirements": {
+"minimum": "<strong>Minimum:</strong><br><ul class=\"bb_ul\"><li><strong>OS *:</strong> Windows 10 (+ specific versions of 7)<br></li><li><strong>Processor:</strong> 3.5 GHz Intel Core i5 3450 or AMD FX-8350<br></li><li><strong>Memory:</strong> 4 GB RAM<br></li><li><strong>Graphics:</strong> GTX680 or equivalent<br></li><li><strong>DirectX:</strong> Version 11<br></li><li><strong>Network:</strong> Broadband Internet connection<br></li><li><strong>Storage:</strong> 12 GB available space</li></ul>",
+"recommended": "<strong>Recommended:</strong><br><ul class=\"bb_ul\"><li><strong>OS:</strong> Windows 10<br></li><li><strong>Processor:</strong> Intel Core i7 8700K / AMD Ryzen7 2700X<br></li><li><strong>Memory:</strong> 16 GB RAM<br></li><li><strong>Graphics:</strong> NVidia GTX 1080Ti or equivalent<br></li><li><strong>DirectX:</strong> Version 11<br></li><li><strong>Network:</strong> Broadband Internet connection<br></li><li><strong>Storage:</strong> 12 GB available space</li></ul>"
+},
+"mac_requirements": [],
+"linux_requirements": [],
+"developers": [
+"Reiza Studios"
+],
+"publishers": [
+"Reiza Studios"
+],
+"package_groups": [],
+"platforms": {
+"windows": true,
+"mac": false,
+"linux": false
+},
+"categories": [
+{
+"id": 2,
+"description": "Single-player"
+},
+{
+"id": 10,
+"description": "Game demo"
+},
+{
+"id": 53,
+"description": "VR Supported"
+}
+],
+"screenshots": [
+{
+"id": 0,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1786210/ss_4f7772fdf6d2ddf4ff78bbe72f6fd00a5c9fd58c.600x338.jpg?t=1637181592",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1786210/ss_4f7772fdf6d2ddf4ff78bbe72f6fd00a5c9fd58c.1920x1080.jpg?t=1637181592"
+},
+{
+"id": 1,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1786210/ss_f226ad166d252dd39445ba53d4027e56aa0cc3ba.600x338.jpg?t=1637181592",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1786210/ss_f226ad166d252dd39445ba53d4027e56aa0cc3ba.1920x1080.jpg?t=1637181592"
+},
+{
+"id": 2,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1786210/ss_4a06b6334e7942c5e6479db56441f6e15a277bab.600x338.jpg?t=1637181592",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1786210/ss_4a06b6334e7942c5e6479db56441f6e15a277bab.1920x1080.jpg?t=1637181592"
+},
+{
+"id": 3,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1786210/ss_d5c5f9b9cb76a3061ec313772d8c932af55cf598.600x338.jpg?t=1637181592",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1786210/ss_d5c5f9b9cb76a3061ec313772d8c932af55cf598.1920x1080.jpg?t=1637181592"
+},
+{
+"id": 4,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1786210/ss_7d169cde0888ca82a523a4017aca419ffd745422.600x338.jpg?t=1637181592",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1786210/ss_7d169cde0888ca82a523a4017aca419ffd745422.1920x1080.jpg?t=1637181592"
+},
+{
+"id": 5,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1786210/ss_46d98572867e9e3b0b67e7a68c1bd216d301f8ec.600x338.jpg?t=1637181592",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1786210/ss_46d98572867e9e3b0b67e7a68c1bd216d301f8ec.1920x1080.jpg?t=1637181592"
+},
+{
+"id": 6,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1786210/ss_a5c776f5249f361d6c0fc54fb11c969fadd5535a.600x338.jpg?t=1637181592",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1786210/ss_a5c776f5249f361d6c0fc54fb11c969fadd5535a.1920x1080.jpg?t=1637181592"
+}
+],
+"release_date": {
+"coming_soon": false,
+"date": "17 Nov, 2021"
+},
+"support_info": {
+"url": "https://forum.reizastudios.com",
+"email": "support@reizastudios.com"
+},
+"background": "https://store.akamai.steamstatic.com/images/storepagebackground/app/1786210?t=1637181592",
+"background_raw": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1786210/page_bg_raw.jpg?t=1637181592",
+"content_descriptors": {
+"ids": [],
+"notes": null
+},
+"ratings": null
+}

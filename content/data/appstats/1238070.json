@@ -1,0 +1,162 @@
+{
+"type": "dlc",
+"name": "Dead Space™ 3 Awakened",
+"steam_appid": 1238070,
+"required_age": 0,
+"is_free": false,
+"detailed_description": "As madness takes hold, they’ll find they can’t trust their eyes or each other. The trek leads to the ship Terra Nova, now home to a sadistic cult of Unitologists. The horror continues as the Dead Space saga enters its darkest chapter.",
+"about_the_game": "As madness takes hold, they’ll find they can’t trust their eyes or each other. The trek leads to the ship Terra Nova, now home to a sadistic cult of Unitologists. The horror continues as the Dead Space saga enters its darkest chapter.",
+"short_description": "Left for dead on Tau Volantis, Isaac Clarke and John Carver face a daunting journey.",
+"fullgame": {
+"appid": "1238060",
+"name": "Dead Space™ 3"
+},
+"supported_languages": "English<strong>*</strong>, French<strong>*</strong>, Italian<strong>*</strong>, German<strong>*</strong>, Spanish - Spain<strong>*</strong>, Russian<br><strong>*</strong>languages with full audio support",
+"header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1238070/header.jpg?t=1593440016",
+"capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1238070/capsule_231x87.jpg?t=1593440016",
+"capsule_imagev5": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1238070/capsule_184x69.jpg?t=1593440016",
+"website": "",
+"pc_requirements": {
+"minimum": "<strong>Minimum:</strong><br><ul class=\"bb_ul\"><li><strong>OS *:</strong> Windows 7<br></li><li><strong>Processor:</strong> 2.8 GHz processor or equivalent<br></li><li><strong>Memory:</strong> 1 GB RAM<br></li><li><strong>Graphics:</strong> NVIDIA GeForce 6800 or better (7300, 7600 GS, and 8500 are below minimum system requirements), ATI X1600 Pro or better (X1300, X1300 Pro and HD2400 are below minimum system requirements), 256MB Video Card and Shader Model 3.0 required<br></li><li><strong>DirectX:</strong> Version 9.0c<br></li><li><strong>Storage:</strong> 10 GB available space<br></li><li><strong>Additional Notes:</strong> Please note that attempting to play the game using video hardware that isn’t listed above may result in reduced performance, graphical issues or cause the game to not run at all.</li></ul>"
+},
+"mac_requirements": [],
+"linux_requirements": [],
+"legal_notice": "Germany, Austria, and Switzerland only: EA’S PRIVACY & COOKIE POLICY (privacy.ea.com/de) APPLIES. <br />\r\nOther EU, United Kingdom, Norway, Iceland, Andorra, Bosnia and Herzegovina, Georgia, Kosovo, Macedonia (FYROM), Moldova, Monaco, Montenegro, San Marino, Serbia, Turkey, Vatican City (Holy See), Liechtenstein only: ACKNOWLEDGEMENT OF EA's PRIVACY & COOKIE POLICY (privacy.ea.com) REQUIRED TO PLAY. <br />\r\nAll other residents: ACCEPTANCE OF EA PRIVACY & COOKIE POLICY (privacy.ea.com) REQUIRED TO PLAY. <br />\r\n<br />\r\nINTERNET CONNECTION; EA ACCOUNT; STEAM ACCOUNT; ACCEPTANCE OF EA USER AGREEMENT (terms.ea.com) & ORIGIN END USER LICENSE AGREEMENT (ea.com/legal); AND DOWNLOAD & INSTALLATION OF THE ORIGIN CLIENT SOFTWARE (origin.com/download) REQUIRED TO PLAY. YOU MUST LINK YOUR EA AND STEAM ACCOUNTS TO PLAY; EA WILL SHARE YOUR ACCOUNT ID AND INDIVIDUAL GAME AND PLAY RECORDS WITH STEAM TO VALIDATE YOUR PURCHASE AND/OR REFUND REQUEST. ACCESS TO SOFTWARE CONTENT IS LIMITED TO ONE EA & ONE STEAM ACCOUNT & IS NON-TRANSFERABLE AFTER PURCHASE. YOU MAY NEED TO BE 13+ or 16+ TO REGISTER FOR AN EA ACCOUNT (AGE MAY VARY, SEE http://o.ea.com/ea/child-access FOR DETAILS). SOME CONTENT MAY REQUIRE GAMEPLAY TO UNLOCK. CONTENT UPDATES MAY BE DOWNLOADED AUTOMATICALLY, REQUIRE ADDITIONAL STORAGE, AND INCUR BANDWIDTH USAGE FEES. EA MAY PROVIDE CERTAIN FREE INCREMENTAL CONTENT &/OR UPDATES. EA MAY RETIRE ONLINE FEATURES AFTER 30 DAYS NOTICE POSTED ON ea.com/service-updates.<br />\r\n<br />\r\nEA User Agreement: terms.ea.com/de for German residents and terms.ea.com for all other residents<br />\r\nEA Privacy & Cookie Policy: privacy.ea.com/de for German residents and privacy.ea.com for all other residents<br />\r\nOrigin EULA: ea.com/de-de/legal for German residents and ea.com/legal for all other residents",
+"developers": [
+"Visceral Games"
+],
+"publishers": [
+"Electronic Arts"
+],
+"price_overview": {
+"currency": "EUR",
+"initial": 999,
+"final": 999,
+"discount_percent": 0,
+"initial_formatted": "",
+"final_formatted": "9,99€"
+},
+"packages": [
+429461
+],
+"package_groups": [
+{
+"name": "default",
+"title": "Buy Dead Space™ 3 Awakened",
+"description": "",
+"selection_text": "Select a purchase option",
+"save_text": "",
+"display_type": 0,
+"is_recurring_subscription": "false",
+"subs": [
+{
+"packageid": 429461,
+"percent_savings_text": " ",
+"percent_savings": 0,
+"option_text": "Dead Space™ 3 Awakened - 9,99€",
+"option_description": "",
+"can_get_free_license": "0",
+"is_free_license": false,
+"price_in_cents_with_discount": 999
+}
+]
+}
+],
+"platforms": {
+"windows": true,
+"mac": false,
+"linux": false
+},
+"categories": [
+{
+"id": 2,
+"description": "Single-player"
+},
+{
+"id": 1,
+"description": "Multi-player"
+},
+{
+"id": 9,
+"description": "Co-op"
+},
+{
+"id": 38,
+"description": "Online Co-op"
+},
+{
+"id": 21,
+"description": "Downloadable Content"
+}
+],
+"genres": [
+{
+"id": "1",
+"description": "Action"
+}
+],
+"screenshots": [
+{
+"id": 0,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1238070/ss_a60864d9cece1f42e38aab58dcc422151731242b.600x338.jpg?t=1593440016",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1238070/ss_a60864d9cece1f42e38aab58dcc422151731242b.1920x1080.jpg?t=1593440016"
+},
+{
+"id": 1,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1238070/ss_2f25f2c8307b84fdde855966841b5641374e1311.600x338.jpg?t=1593440016",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1238070/ss_2f25f2c8307b84fdde855966841b5641374e1311.1920x1080.jpg?t=1593440016"
+},
+{
+"id": 2,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1238070/ss_56767e2d862664dcc616e0e29eb6236d601b7d51.600x338.jpg?t=1593440016",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1238070/ss_56767e2d862664dcc616e0e29eb6236d601b7d51.1920x1080.jpg?t=1593440016"
+},
+{
+"id": 3,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1238070/ss_3f2e5f978550814e4f207e0c7ef7d8c5b2f2713c.600x338.jpg?t=1593440016",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1238070/ss_3f2e5f978550814e4f207e0c7ef7d8c5b2f2713c.1920x1080.jpg?t=1593440016"
+},
+{
+"id": 4,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1238070/ss_bde8c6c8642d5f305ce471531b28cc31acda7abf.600x338.jpg?t=1593440016",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1238070/ss_bde8c6c8642d5f305ce471531b28cc31acda7abf.1920x1080.jpg?t=1593440016"
+}
+],
+"movies": [
+{
+"id": 256791233,
+"name": "Awakened",
+"thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/256791233/movie.293x165.jpg?t=1593440011",
+"webm": {
+"480": "http://video.akamai.steamstatic.com/store_trailers/256791233/movie480_vp9.webm?t=1593440011",
+"max": "http://video.akamai.steamstatic.com/store_trailers/256791233/movie_max_vp9.webm?t=1593440011"
+},
+"mp4": {
+"480": "http://video.akamai.steamstatic.com/store_trailers/256791233/movie480.mp4?t=1593440011",
+"max": "http://video.akamai.steamstatic.com/store_trailers/256791233/movie_max.mp4?t=1593440011"
+},
+"highlight": true
+}
+],
+"recommendations": {
+"total": 315
+},
+"release_date": {
+"coming_soon": false,
+"date": "18 Jun, 2020"
+},
+"support_info": {
+"url": "https://help.ea.com/",
+"email": ""
+},
+"background": "https://store.akamai.steamstatic.com/images/storepagebackground/app/1238070?t=1593440016",
+"background_raw": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1238070/page_bg_raw.jpg?t=1593440016",
+"content_descriptors": {
+"ids": [
+2,
+5
+],
+"notes": null
+},
+"ratings": null
+}

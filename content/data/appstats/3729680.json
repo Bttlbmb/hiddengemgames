@@ -1,0 +1,100 @@
+{
+"type": "demo",
+"name": "quarantine ME B Demo",
+"steam_appid": 3729680,
+"required_age": 0,
+"is_free": true,
+"detailed_description": "<p class=\"bb_paragraph\" ><strong>quarantine ME path F demo</strong></p><p class=\"bb_paragraph\" ></p><p class=\"bb_paragraph\" >This demo will travel you straight from Day2 to Day5 and features <strong>Path B, one of 12 psychological routes planned for the full version.  </strong><br>It focuses on themes of productivity, sustainability, and consumption.</p><p class=\"bb_paragraph\" >Even in this limited route, there are <strong>nearly 15 distinct endings</strong>, determined by how you interact with the world and respond to its inhabitants. <br>The full game will contain <strong>100+ outcomes</strong>, each reflecting a different facet of human nature. </p><p class=\"bb_paragraph\" ><strong>Key Features:</strong></p><ul class=\"bb_ul\"><li><p class=\"bb_paragraph\" >A personality test disguised as a game</p></li><li><p class=\"bb_paragraph\" >Branching dialogues and meaningful choices</p></li><li><p class=\"bb_paragraph\" >100+ psychological outcomes (15 in this demo)</p></li><li><p class=\"bb_paragraph\" >One-man development with original soundtrack</p></li><li><p class=\"bb_paragraph\" >A game that watches you back</p></li></ul><p class=\"bb_paragraph\" ><strong>A slow game for fast minds. A mirror, not a distraction.</strong></p>",
+"about_the_game": "<p class=\"bb_paragraph\" ><strong>quarantine ME path F demo</strong></p><p class=\"bb_paragraph\" ></p><p class=\"bb_paragraph\" >This demo will travel you straight from Day2 to Day5 and features <strong>Path B, one of 12 psychological routes planned for the full version.  </strong><br>It focuses on themes of productivity, sustainability, and consumption.</p><p class=\"bb_paragraph\" >Even in this limited route, there are <strong>nearly 15 distinct endings</strong>, determined by how you interact with the world and respond to its inhabitants. <br>The full game will contain <strong>100+ outcomes</strong>, each reflecting a different facet of human nature. </p><p class=\"bb_paragraph\" ><strong>Key Features:</strong></p><ul class=\"bb_ul\"><li><p class=\"bb_paragraph\" >A personality test disguised as a game</p></li><li><p class=\"bb_paragraph\" >Branching dialogues and meaningful choices</p></li><li><p class=\"bb_paragraph\" >100+ psychological outcomes (15 in this demo)</p></li><li><p class=\"bb_paragraph\" >One-man development with original soundtrack</p></li><li><p class=\"bb_paragraph\" >A game that watches you back</p></li></ul><p class=\"bb_paragraph\" ><strong>A slow game for fast minds. A mirror, not a distraction.</strong></p>",
+"short_description": "Quarantine ME is a projective personality test disguised as a video game. Explore freely, interact with furniture, make choices in dialogues, and receive personalized feedback on your playstyle and personality. FIND YOURSELF!",
+"fullgame": {
+"appid": "3708520",
+"name": "quarantine ME"
+},
+"supported_languages": "English<strong>*</strong><br><strong>*</strong>languages with full audio support",
+"header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3729680/bcd013e9d5797a4dfb3e80d1626de4893716bd65/header.jpg?t=1751999676",
+"capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3729680/0bde48f0885489c4eb6cfaec34bae334fcdc28f7/capsule_231x87.jpg?t=1751999676",
+"capsule_imagev5": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3729680/0bde48f0885489c4eb6cfaec34bae334fcdc28f7/capsule_184x69.jpg?t=1751999676",
+"website": null,
+"pc_requirements": {
+"minimum": "<strong>Minimum:</strong><br><ul class=\"bb_ul\"><li><strong>OS *:</strong> Windows 7/8/8.1/10 (32bit/64bit)<br></li><li><strong>Processor:</strong> Intel Core 2 Duo or equivalent or greater<br></li><li><strong>Memory:</strong> 2 GB RAM<br></li><li><strong>Graphics:</strong> One with OpenGL support<br></li><li><strong>DirectX:</strong> Version 9.0<br></li><li><strong>Storage:</strong> 300 MB available space</li></ul>"
+},
+"mac_requirements": {
+"minimum": "<strong>Minimum:</strong><br><ul class=\"bb_ul\"><li><strong>OS:</strong> Mac OS X 10.10<br></li><li><strong>Processor:</strong> Intel Core 2 Duo or equivalent or greater<br></li><li><strong>Memory:</strong> 2 MB RAM<br></li><li><strong>Graphics:</strong> One with OpenGL support<br></li><li><strong>Storage:</strong> 650 MB available space</li></ul>"
+},
+"linux_requirements": [],
+"developers": [
+"SIDD"
+],
+"publishers": [
+"SIDD"
+],
+"package_groups": [],
+"platforms": {
+"windows": true,
+"mac": true,
+"linux": false
+},
+"categories": [
+{
+"id": 2,
+"description": "Single-player"
+},
+{
+"id": 10,
+"description": "Game demo"
+},
+{
+"id": 66,
+"description": "Color Alternatives"
+},
+{
+"id": 75,
+"description": "Keyboard Only Option"
+},
+{
+"id": 76,
+"description": "Mouse Only Option"
+},
+{
+"id": 79,
+"description": "Save Anytime"
+},
+{
+"id": 77,
+"description": "Touch Only Option"
+}
+],
+"release_date": {
+"coming_soon": false,
+"date": "12 May, 2025"
+},
+"support_info": {
+"url": "",
+"email": "q.me.videogame@gmail.com"
+},
+"background": "https://store.akamai.steamstatic.com/images/storepagebackground/app/3729680?t=1751999676",
+"background_raw": "https://store.akamai.steamstatic.com/images/storepagebackground/app/3729680?t=1751999676",
+"content_descriptors": {
+"ids": [],
+"notes": null
+},
+"ratings": {
+"dejus": {
+"rating_generated": "1",
+"rating": "l",
+"required_age": "0",
+"banned": "0",
+"use_age_gate": "0",
+"descriptors": ""
+},
+"steam_germany": {
+"rating_generated": "1",
+"rating": "0",
+"required_age": "0",
+"banned": "0",
+"use_age_gate": "0",
+"descriptors": ""
+}
+}
+}

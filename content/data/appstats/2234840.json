@@ -1,0 +1,196 @@
+{
+"type": "dlc",
+"name": "Roxy Raccoon's Pinball Panic - Sports Spectacle",
+"steam_appid": 2234840,
+"required_age": 0,
+"is_free": false,
+"controller_support": "full",
+"detailed_description": "<h2 class=\"bb_tag\" >1 Brand New Table with online leaderboards and unlockable cosmetics!</h2>Sports themed table featuring a variety of sports and two upper playfields.<h2 class=\"bb_tag\" >Sports Spectacle</h2><ul class=\"bb_ul\"><li> Standard sized table with 2 upper platforms.<br></li><li> 6 Flippers, 2 slingshots, 5 Bumpers, 6 Drop Targets, 3 Holes, 3 Rollovers, 2 Raceways.<br></li><li> Ball Saver, Kickback.</li></ul><h2 class=\"bb_tag\" >Cosmetics</h2><ul class=\"bb_ul\"><li> Golf Ball: 1 new playable character (the ball handles the same, differences are visual only).<br></li><li> 3 Sport themed accessories.<br></li><li> 3 Furs, to celebrate your love of all things sports.</li></ul>",
+"about_the_game": "<h2 class=\"bb_tag\" >1 Brand New Table with online leaderboards and unlockable cosmetics!</h2>Sports themed table featuring a variety of sports and two upper playfields.<h2 class=\"bb_tag\" >Sports Spectacle</h2><ul class=\"bb_ul\"><li> Standard sized table with 2 upper platforms.<br></li><li> 6 Flippers, 2 slingshots, 5 Bumpers, 6 Drop Targets, 3 Holes, 3 Rollovers, 2 Raceways.<br></li><li> Ball Saver, Kickback.</li></ul><h2 class=\"bb_tag\" >Cosmetics</h2><ul class=\"bb_ul\"><li> Golf Ball: 1 new playable character (the ball handles the same, differences are visual only).<br></li><li> 3 Sport themed accessories.<br></li><li> 3 Furs, to celebrate your love of all things sports.</li></ul>",
+"short_description": "1 Brand New Table with online leaderboards and unlockable cosmetics! Sports themed table with 2 upper playfields.",
+"fullgame": {
+"appid": "1807690",
+"name": "Roxy Raccoon's Pinball Panic"
+},
+"supported_languages": "English<strong>*</strong>, French, German, Polish, Spanish - Latin America, Portuguese - Brazil, Turkish, Italian<br><strong>*</strong>languages with full audio support",
+"header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2234840/header.jpg?t=1709758029",
+"capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2234840/capsule_231x87.jpg?t=1709758029",
+"capsule_imagev5": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2234840/capsule_184x69.jpg?t=1709758029",
+"website": null,
+"pc_requirements": {
+"minimum": "<strong>Minimum:</strong><br><ul class=\"bb_ul\"><li><strong>OS:</strong> Windows 10</li></ul>"
+},
+"mac_requirements": [],
+"linux_requirements": [],
+"developers": [
+"Sinomod Studios"
+],
+"price_overview": {
+"currency": "EUR",
+"initial": 99,
+"final": 64,
+"discount_percent": 35,
+"initial_formatted": "0,99€",
+"final_formatted": "0,64€"
+},
+"packages": [
+801137
+],
+"package_groups": [
+{
+"name": "default",
+"title": "Buy Roxy Raccoon's Pinball Panic - Sports Spectacle",
+"description": "",
+"selection_text": "Select a purchase option",
+"save_text": "",
+"display_type": 0,
+"is_recurring_subscription": "false",
+"subs": [
+{
+"packageid": 801137,
+"percent_savings_text": "-35% ",
+"percent_savings": 0,
+"option_text": "Roxy Raccoon's Pinball Panic - Sports Spectacle - <span class=\"discount_original_price\">0,99€</span> 0,64€",
+"option_description": "",
+"can_get_free_license": "0",
+"is_free_license": false,
+"price_in_cents_with_discount": 64
+}
+]
+}
+],
+"platforms": {
+"windows": true,
+"mac": false,
+"linux": false
+},
+"categories": [
+{
+"id": 2,
+"description": "Single-player"
+},
+{
+"id": 21,
+"description": "Downloadable Content"
+},
+{
+"id": 22,
+"description": "Steam Achievements"
+},
+{
+"id": 28,
+"description": "Full controller support"
+},
+{
+"id": 23,
+"description": "Steam Cloud"
+},
+{
+"id": 25,
+"description": "Steam Leaderboards"
+}
+],
+"genres": [
+{
+"id": "1",
+"description": "Action"
+},
+{
+"id": "25",
+"description": "Adventure"
+},
+{
+"id": "4",
+"description": "Casual"
+},
+{
+"id": "23",
+"description": "Indie"
+},
+{
+"id": "28",
+"description": "Simulation"
+},
+{
+"id": "18",
+"description": "Sports"
+}
+],
+"screenshots": [
+{
+"id": 0,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2234840/ss_3099732dd8a13b2862dc4f34f0fec7da3569d4b4.600x338.jpg?t=1709758029",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2234840/ss_3099732dd8a13b2862dc4f34f0fec7da3569d4b4.1920x1080.jpg?t=1709758029"
+},
+{
+"id": 1,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2234840/ss_0f101d19eeb0bd18a18997fcfe7a32308b106f42.600x338.jpg?t=1709758029",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2234840/ss_0f101d19eeb0bd18a18997fcfe7a32308b106f42.1920x1080.jpg?t=1709758029"
+},
+{
+"id": 2,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2234840/ss_9a0fbffbf96a91bf698e4fe15a1b20ab208ac489.600x338.jpg?t=1709758029",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2234840/ss_9a0fbffbf96a91bf698e4fe15a1b20ab208ac489.1920x1080.jpg?t=1709758029"
+},
+{
+"id": 3,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2234840/ss_297131cb514687f097a84ae9592f5627acb366df.600x338.jpg?t=1709758029",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2234840/ss_297131cb514687f097a84ae9592f5627acb366df.1920x1080.jpg?t=1709758029"
+},
+{
+"id": 4,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2234840/ss_f2b74b90c1773f5ca615d5b50b3a8142c8056cff.600x338.jpg?t=1709758029",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2234840/ss_f2b74b90c1773f5ca615d5b50b3a8142c8056cff.1920x1080.jpg?t=1709758029"
+},
+{
+"id": 5,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2234840/ss_ec7657fc9fbc42d15b613055454d2dddc6edc17d.600x338.jpg?t=1709758029",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2234840/ss_ec7657fc9fbc42d15b613055454d2dddc6edc17d.1920x1080.jpg?t=1709758029"
+},
+{
+"id": 6,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2234840/ss_a847c3edba7640580810573519160f0b9a6d4a14.600x338.jpg?t=1709758029",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2234840/ss_a847c3edba7640580810573519160f0b9a6d4a14.1920x1080.jpg?t=1709758029"
+},
+{
+"id": 7,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2234840/ss_ecf830465cc33a20fc972d0c46332c5d57b522cb.600x338.jpg?t=1709758029",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2234840/ss_ecf830465cc33a20fc972d0c46332c5d57b522cb.1920x1080.jpg?t=1709758029"
+}
+],
+"movies": [
+{
+"id": 256927534,
+"name": "Roxy Raccoon's Pinball Panic - Sports Spectacle Trailer",
+"thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/256927534/movie.293x165.jpg?t=1687968702",
+"webm": {
+"480": "http://video.akamai.steamstatic.com/store_trailers/256927534/movie480_vp9.webm?t=1687968702",
+"max": "http://video.akamai.steamstatic.com/store_trailers/256927534/movie_max_vp9.webm?t=1687968702"
+},
+"mp4": {
+"480": "http://video.akamai.steamstatic.com/store_trailers/256927534/movie480.mp4?t=1687968702",
+"max": "http://video.akamai.steamstatic.com/store_trailers/256927534/movie_max.mp4?t=1687968702"
+},
+"highlight": true
+}
+],
+"release_date": {
+"coming_soon": false,
+"date": "3 Jul, 2023"
+},
+"support_info": {
+"url": "",
+"email": "sinomodstudios@gmail.com"
+},
+"background": "https://store.akamai.steamstatic.com/images/storepagebackground/app/2234840?t=1709758029",
+"background_raw": "https://store.akamai.steamstatic.com/images/storepagebackground/app/2234840?t=1709758029",
+"content_descriptors": {
+"ids": [],
+"notes": null
+},
+"ratings": {
+"dejus": {
+"rating": "l"
+}
+}
+}
