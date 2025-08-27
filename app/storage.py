@@ -7,6 +7,7 @@ import tempfile
 from pathlib import Path
 from typing import Any, Optional
 from datetime import datetime, timezone
+from . import config as cfg
 
 # Base data dir used by the project
 DATA_DIR = Path("content/data")
@@ -16,6 +17,9 @@ POOL_META_PATH = DATA_DIR / "candidate_pool_meta.json"
 # Back-compat aliases for old code that expects these names
 CANDIDATE_POOL_PATH = POOL_PATH
 CANDIDATE_POOL_META_PATH = POOL_META_PATH
+
+# Expose the posts directory so main.py can write posts via storage
+POST_DIR = cfg.POST_DIR  # e.g., content/posts
 
 # Default file locations
 POOL_PATH       = DATA_DIR / "candidate_pool.json"
