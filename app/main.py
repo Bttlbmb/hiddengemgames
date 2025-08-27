@@ -158,7 +158,7 @@ def run_harvest(
         apps,
         min_reviews=min_reviews,
         block_nsfw=block_nsfw,
-        max_apps_to_check=max_apps_to_check,
+        sample_size=max_apps_to_check,
         batch_size=batch_size,
         wait_s=wait_s,
     )
