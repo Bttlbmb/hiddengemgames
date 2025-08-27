@@ -243,19 +243,31 @@ def _is_viable_game(payload: dict) -> bool:
 
 def _is_nsfw(payload: dict) -> bool:
     """Basic NSFW detection based on Steam flags/genres/categories."""
-    flags = set(map(str.lower, payload.get("content_descriptors", {}).get("ids", [])))
-    # also look at genres/categories text
-    text = " ".join([
-        " ".join([g.get("description", "") for g in payload.get("genres", []) if isinstance(g, dict)]),
-        " ".join([c.get("description", "") for c in payload.get("categories", []) if isinstance(c, dict)]),
-    ]).lower()
+    # Normalize content descriptor IDs to lowercase strings
+    ids_raw = (payload.get("content_descriptors") or {}).get("ids", [])
+    if isinstance(ids_raw, (int, str)):
+        ids_raw = [ids_raw]
+    flags = {str(x).strip().lower() for x in ids_raw if x is not None}
 
-    nsfw_words = ("adult", "sexual", "nudity", "nsfw")
+    # Also look at genres/categories text
+    genres_txt = " ".join(
+        g.get("description", "") for g in (payload.get("genres") or []) if isinstance(g, dict)
+    )
+    cats_txt = " ".join(
+        c.get("description", "") for c in (payload.get("categories") or []) if isinstance(c, dict)
+    )
+    text = f"{genres_txt} {cats_txt}".lower()
+
+    nsfw_words = ("adult", "sexual", "sex", "nudity", "nsfw", "hentai", "porn")
     if any(w in text for w in nsfw_words):
         return True
-    if "2" in flags:  # Steam sometimes marks mature content with small ints
+
+    # Some stores use small integer codes for mature content
+    if "2" in flags:
         return True
+
     return False
+
 
 
 def _passes_review_threshold_cached(appid: int, min_reviews: int) -> Tuple[bool, Optional[dict]]:
