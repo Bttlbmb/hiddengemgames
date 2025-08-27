@@ -184,7 +184,7 @@ def run_daily() -> None:
         seen = set()
 
     # pick one appid (note: returns INT)
-    appid = steam.pick_from_pool(pool, seen=seen, use_weights=True)
+    appid = steam.pick_from_pool(pool, exclude=seen, use_weights=True)
 
     # fetch details exactly once (retry with one backup pick on failure)
     data = steam.get_appdetails(appid)
