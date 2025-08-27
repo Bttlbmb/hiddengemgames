@@ -1,0 +1,146 @@
+{
+"type": "game",
+"name": "Prestis Silly Workshop",
+"steam_appid": 3058440,
+"required_age": 0,
+"is_free": false,
+"detailed_description": "<p class=\"bb_paragraph\" >Prestis Silly Workshop is a App that allows streamers to interact with their fans with multiple features!</p><p class=\"bb_paragraph\" ></p><h2 class=\"bb_tag\" >ALT+F4</h2><p class=\"bb_paragraph\" >This allows your viewers to stop any currently focus application!</p><p class=\"bb_paragraph\" >Of course you can blacklist specific programs within the configuration of the module!</p><h2 class=\"bb_tag\" >Bounce</h2><p class=\"bb_paragraph\" >This allows your viewers to spawn little pictures on your screen which bounce around!</p><h2 class=\"bb_tag\" >Mute Mic</h2><p class=\"bb_paragraph\" >Did you ever feel like you viewers should be able to chose when you are muted? Well this is exactly what Mute Mic does, it mutes the OBS (and in the future discord) mic input for a set amount of time!</p><h2 class=\"bb_tag\" >Keyboard Input</h2><p class=\"bb_paragraph\" >This allows your viewers to send ANY keyboard input and maybe be the reason you lose your next match!</p><h2 class=\"bb_tag\" >Mouse Input</h2><p class=\"bb_paragraph\" >Similar to keyboard input your viewers can move your mouse around and click at everything!</p><h2 class=\"bb_tag\" >Tamagotchi (Currently not functional)</h2><p class=\"bb_paragraph\" >Spawn your own little entity to take care of with your stream!</p><h2 class=\"bb_tag\" >Bluescreen of Death</h2><p class=\"bb_paragraph\" >Let your viewers open a fake BSoD that keeps you from doing anything for a few seconds!</p><h2 class=\"bb_tag\" >PTO (Prestis Take Over)</h2><p class=\"bb_paragraph\" >Allow me to do some shenanigans on stream!</p><p class=\"bb_paragraph\" ></p>",
+"about_the_game": "<p class=\"bb_paragraph\" >Prestis Silly Workshop is a App that allows streamers to interact with their fans with multiple features!</p><p class=\"bb_paragraph\" ></p><h2 class=\"bb_tag\" >ALT+F4</h2><p class=\"bb_paragraph\" >This allows your viewers to stop any currently focus application!</p><p class=\"bb_paragraph\" >Of course you can blacklist specific programs within the configuration of the module!</p><h2 class=\"bb_tag\" >Bounce</h2><p class=\"bb_paragraph\" >This allows your viewers to spawn little pictures on your screen which bounce around!</p><h2 class=\"bb_tag\" >Mute Mic</h2><p class=\"bb_paragraph\" >Did you ever feel like you viewers should be able to chose when you are muted? Well this is exactly what Mute Mic does, it mutes the OBS (and in the future discord) mic input for a set amount of time!</p><h2 class=\"bb_tag\" >Keyboard Input</h2><p class=\"bb_paragraph\" >This allows your viewers to send ANY keyboard input and maybe be the reason you lose your next match!</p><h2 class=\"bb_tag\" >Mouse Input</h2><p class=\"bb_paragraph\" >Similar to keyboard input your viewers can move your mouse around and click at everything!</p><h2 class=\"bb_tag\" >Tamagotchi (Currently not functional)</h2><p class=\"bb_paragraph\" >Spawn your own little entity to take care of with your stream!</p><h2 class=\"bb_tag\" >Bluescreen of Death</h2><p class=\"bb_paragraph\" >Let your viewers open a fake BSoD that keeps you from doing anything for a few seconds!</p><h2 class=\"bb_tag\" >PTO (Prestis Take Over)</h2><p class=\"bb_paragraph\" >Allow me to do some shenanigans on stream!</p><p class=\"bb_paragraph\" ></p>",
+"short_description": "Give your stream the ultimate power of closing your games, giving your fake Bluescreens and muting your audio input! This and a few more things are possible with Prestis silly Workshop!",
+"supported_languages": "English",
+"reviews": "“This thing is buzzing heavy”<br>7 – Azura<br><br>“Quite frankly I am suprissed this even got on steam!”<br>10 – OnlyWiff<br>",
+"header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3058440/46f407d077bab377366d038d5c14cf16a901c6db/header.jpg?t=1755078283",
+"capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3058440/700916ad61d4025b502bf24b3045223e6e230b8b/capsule_231x87.jpg?t=1755078283",
+"capsule_imagev5": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3058440/700916ad61d4025b502bf24b3045223e6e230b8b/capsule_184x69.jpg?t=1755078283",
+"website": null,
+"pc_requirements": {
+"minimum": "<strong>Minimum:</strong><br><ul class=\"bb_ul\"><li>Requires a 64-bit processor and operating system<br></li><li><strong>OS:</strong> Windows 10<br></li><li><strong>Processor:</strong> Ryzen 5 2700 / Inteli Core i7-8700<br></li><li><strong>Memory:</strong> 4 GB RAM<br></li><li><strong>Graphics:</strong> GTX 1050<br></li><li><strong>Network:</strong> Broadband Internet connection<br></li><li><strong>Storage:</strong> 1 GB available space</li></ul>",
+"recommended": "<strong>Recommended:</strong><br><ul class=\"bb_ul\"><li>Requires a 64-bit processor and operating system<br></li><li><strong>OS:</strong> Windows 11<br></li><li><strong>Processor:</strong> Ryzen 7 3800X<br></li><li><strong>Memory:</strong> 16 GB RAM<br></li><li><strong>Graphics:</strong> GTX 1060<br></li><li><strong>Network:</strong> Broadband Internet connection<br></li><li><strong>Storage:</strong> 5 GB available space</li></ul>"
+},
+"mac_requirements": {
+"minimum": "<strong>Minimum:</strong><br><ul class=\"bb_ul\"></ul>",
+"recommended": "<strong>Recommended:</strong><br><ul class=\"bb_ul\"></ul>"
+},
+"linux_requirements": {
+"minimum": "<strong>Minimum:</strong><br><ul class=\"bb_ul\"><li><strong>OS:</strong> Ubuntu 22</li></ul>",
+"recommended": "<strong>Recommended:</strong><br><ul class=\"bb_ul\"></ul>"
+},
+"ext_user_account_notice": "Twitch ",
+"developers": [
+"Presti"
+],
+"publishers": [
+"Presti"
+],
+"package_groups": [],
+"platforms": {
+"windows": true,
+"mac": false,
+"linux": false
+},
+"categories": [
+{
+"id": 2,
+"description": "Single-player"
+},
+{
+"id": 74,
+"description": "Playable without Timed Input"
+}
+],
+"genres": [
+{
+"id": "1",
+"description": "Action"
+},
+{
+"id": "23",
+"description": "Indie"
+},
+{
+"id": "57",
+"description": "Utilities"
+},
+{
+"id": "70",
+"description": "Early Access"
+}
+],
+"screenshots": [
+{
+"id": 0,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3058440/89dcc5c14d1f1370194be2171f78687c2cca9d9b/ss_89dcc5c14d1f1370194be2171f78687c2cca9d9b.600x338.jpg?t=1755078283",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3058440/89dcc5c14d1f1370194be2171f78687c2cca9d9b/ss_89dcc5c14d1f1370194be2171f78687c2cca9d9b.1920x1080.jpg?t=1755078283"
+},
+{
+"id": 1,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3058440/a002b2b32b87a0aa5fa3b725490390223fc16e61/ss_a002b2b32b87a0aa5fa3b725490390223fc16e61.600x338.jpg?t=1755078283",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3058440/a002b2b32b87a0aa5fa3b725490390223fc16e61/ss_a002b2b32b87a0aa5fa3b725490390223fc16e61.1920x1080.jpg?t=1755078283"
+},
+{
+"id": 2,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3058440/3a078580d902aaec1540ff992eb093ec83c88b46/ss_3a078580d902aaec1540ff992eb093ec83c88b46.600x338.jpg?t=1755078283",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3058440/3a078580d902aaec1540ff992eb093ec83c88b46/ss_3a078580d902aaec1540ff992eb093ec83c88b46.1920x1080.jpg?t=1755078283"
+},
+{
+"id": 3,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3058440/6a7b7a6870706b52e6311143c8f7282bc4199008/ss_6a7b7a6870706b52e6311143c8f7282bc4199008.600x338.jpg?t=1755078283",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3058440/6a7b7a6870706b52e6311143c8f7282bc4199008/ss_6a7b7a6870706b52e6311143c8f7282bc4199008.1920x1080.jpg?t=1755078283"
+},
+{
+"id": 4,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3058440/c7dbe991faf3db96281ce281bfe3f4905c180ad6/ss_c7dbe991faf3db96281ce281bfe3f4905c180ad6.600x338.jpg?t=1755078283",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3058440/c7dbe991faf3db96281ce281bfe3f4905c180ad6/ss_c7dbe991faf3db96281ce281bfe3f4905c180ad6.1920x1080.jpg?t=1755078283"
+}
+],
+"movies": [
+{
+"id": 257178745,
+"name": "PSW Teaser",
+"thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/257178745/c97746967a0d5706ac80d254271df998db38ea67/movie_600x337.jpg?t=1755076229",
+"webm": {
+"480": "http://video.akamai.steamstatic.com/store_trailers/257178745/movie480_vp9.webm?t=1755076229",
+"max": "http://video.akamai.steamstatic.com/store_trailers/257178745/movie_max_vp9.webm?t=1755076229"
+},
+"mp4": {
+"480": "http://video.akamai.steamstatic.com/store_trailers/257178745/movie480.mp4?t=1755076229",
+"max": "http://video.akamai.steamstatic.com/store_trailers/257178745/movie_max.mp4?t=1755076229"
+},
+"highlight": true
+}
+],
+"release_date": {
+"coming_soon": true,
+"date": "October 2025"
+},
+"support_info": {
+"url": "https://support.presti.me",
+"email": "steam-support@presti.me"
+},
+"background": "https://store.akamai.steamstatic.com/images/storepagebackground/app/3058440?t=1755078283",
+"background_raw": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3058440/83b33186fd67f410e82f6e8466559b01bf63e3a1/page_bg_raw.jpg?t=1755078283",
+"content_descriptors": {
+"ids": [
+5
+],
+"notes": "This App contains depictions of a virtual pet you can take care of that CAN show sings of sadness. "
+},
+"ratings": {
+"dejus": {
+"rating_generated": "1",
+"rating": "14",
+"required_age": "14",
+"banned": "0",
+"use_age_gate": "0",
+"descriptors": "Linguagem imprópria"
+},
+"steam_germany": {
+"rating_generated": "1",
+"rating": "12",
+"required_age": "12",
+"banned": "0",
+"use_age_gate": "0",
+"descriptors": "Derbe Sprache"
+}
+}
+}

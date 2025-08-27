@@ -1,0 +1,145 @@
+{
+"type": "dlc",
+"name": "My Sudoku - Classic 6x6 Medium 4",
+"steam_appid": 3053050,
+"required_age": 0,
+"is_free": false,
+"detailed_description": "Add 30 new Sudoku puzzles to your game.",
+"about_the_game": "Add 30 new Sudoku puzzles to your game.",
+"short_description": "Add 30 new Sudoku puzzles to your game.",
+"fullgame": {
+"appid": "3033660",
+"name": "My Sudoku"
+},
+"supported_languages": "English<strong>*</strong>, French<strong>*</strong>, Italian<strong>*</strong>, German<strong>*</strong>, Spanish - Spain<strong>*</strong>, Japanese<strong>*</strong>, Korean<strong>*</strong>, Portuguese - Brazil<strong>*</strong>, Portuguese - Portugal<strong>*</strong>, Russian<strong>*</strong>, Simplified Chinese<strong>*</strong>, Spanish - Latin America<strong>*</strong>, Traditional Chinese<strong>*</strong><br><strong>*</strong>languages with full audio support",
+"header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3053050/header.jpg?t=1738331927",
+"capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3053050/capsule_231x87.jpg?t=1738331927",
+"capsule_imagev5": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3053050/capsule_184x69.jpg?t=1738331927",
+"website": null,
+"pc_requirements": [],
+"mac_requirements": [],
+"linux_requirements": [],
+"developers": [
+"Dr. Cyril Splutterworth"
+],
+"publishers": [
+"Dr. Cyril Splutterworth"
+],
+"price_overview": {
+"currency": "USD",
+"initial": 299,
+"final": 299,
+"discount_percent": 0,
+"initial_formatted": "",
+"final_formatted": "$2.99"
+},
+"packages": [
+1085106
+],
+"package_groups": [
+{
+"name": "default",
+"title": "Buy My Sudoku - Classic 6x6 Medium 4",
+"description": "",
+"selection_text": "Select a purchase option",
+"save_text": "",
+"display_type": 0,
+"is_recurring_subscription": "false",
+"subs": [
+{
+"packageid": 1085106,
+"percent_savings_text": " ",
+"percent_savings": 0,
+"option_text": "My Sudoku - Classic 6x6 Medium 4 - $2.99",
+"option_description": "",
+"can_get_free_license": "0",
+"is_free_license": false,
+"price_in_cents_with_discount": 299
+}
+]
+}
+],
+"platforms": {
+"windows": true,
+"mac": false,
+"linux": false
+},
+"categories": [
+{
+"id": 2,
+"description": "Single-player"
+},
+{
+"id": 21,
+"description": "Downloadable Content"
+}
+],
+"genres": [
+{
+"id": "4",
+"description": "Casual"
+},
+{
+"id": "2",
+"description": "Strategy"
+},
+{
+"id": "37",
+"description": "Free To Play"
+}
+],
+"screenshots": [
+{
+"id": 0,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3053050/ss_cd4e88051f3bc671ae91cf5d6080d66bb630bb56.600x338.jpg?t=1738331927",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3053050/ss_cd4e88051f3bc671ae91cf5d6080d66bb630bb56.1920x1080.jpg?t=1738331927"
+},
+{
+"id": 1,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3053050/ss_79d66e3ff5b9e63548ff5a1f1fce2fdabe4153ca.600x338.jpg?t=1738331927",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3053050/ss_79d66e3ff5b9e63548ff5a1f1fce2fdabe4153ca.1920x1080.jpg?t=1738331927"
+},
+{
+"id": 2,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3053050/ss_2388ef9c5596fe5c173dfd119b2f09d0c725cb78.600x338.jpg?t=1738331927",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3053050/ss_2388ef9c5596fe5c173dfd119b2f09d0c725cb78.1920x1080.jpg?t=1738331927"
+},
+{
+"id": 3,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3053050/ss_b823f17f9461c3eb7cd634364ae72cd742060012.600x338.jpg?t=1738331927",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3053050/ss_b823f17f9461c3eb7cd634364ae72cd742060012.1920x1080.jpg?t=1738331927"
+}
+],
+"release_date": {
+"coming_soon": false,
+"date": "Jun 24, 2024"
+},
+"support_info": {
+"url": "",
+"email": "cyrilsplutterworth@gmail.com"
+},
+"background": "https://store.akamai.steamstatic.com/images/storepagebackground/app/3053050?t=1738331927",
+"background_raw": "https://store.akamai.steamstatic.com/images/storepagebackground/app/3053050?t=1738331927",
+"content_descriptors": {
+"ids": [],
+"notes": null
+},
+"ratings": {
+"dejus": {
+"rating_generated": "1",
+"rating": "l",
+"required_age": "0",
+"banned": "0",
+"use_age_gate": "0",
+"descriptors": ""
+},
+"steam_germany": {
+"rating_generated": "1",
+"rating": "0",
+"required_age": "0",
+"banned": "0",
+"use_age_gate": "0",
+"descriptors": ""
+}
+}
+}

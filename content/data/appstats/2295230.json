@@ -1,0 +1,125 @@
+{
+"type": "music",
+"name": "Second Front Soundtrack",
+"steam_appid": 2295230,
+"required_age": 0,
+"is_free": false,
+"detailed_description": "Relive your  epic battles. <br />\r\n<br />\r\nThe Second Front soundtrack was composed by Aleksi Aubry-Carlson &amp; Jonathan Figoli. <br />\r\n<br />\r\nThe soundtrack includes 9 tracks created exclusively for the game.",
+"about_the_game": "Relive your  epic battles. <br />\r\n<br />\r\nThe Second Front soundtrack was composed by Aleksi Aubry-Carlson &amp; Jonathan Figoli. <br />\r\n<br />\r\nThe soundtrack includes 9 tracks created exclusively for the game.",
+"short_description": "Official soundtrack for the game &quot;Second Front&quot; composed by Aleksi Aubry-Carlson &amp; Jonathan Figoli",
+"fullgame": {
+"appid": "1148490",
+"name": "Second Front"
+},
+"header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2295230/header.jpg?t=1675155377",
+"capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2295230/capsule_231x87.jpg?t=1675155377",
+"capsule_imagev5": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2295230/capsule_184x69.jpg?t=1675155377",
+"website": null,
+"pc_requirements": {
+"minimum": "<strong>Minimum:</strong><br><ul class=\"bb_ul\"><li><strong>Storage:</strong> 70 MB available space<br></li><li><strong>Storage (high-quality audio):</strong> Additional 140 MB available space</li></ul>"
+},
+"mac_requirements": [],
+"linux_requirements": [],
+"developers": [
+"Aleksi Aubry-Carlson & Jonathan Figoli"
+],
+"publishers": [
+"MicroProse Software"
+],
+"price_overview": {
+"currency": "USD",
+"initial": 699,
+"final": 349,
+"discount_percent": 50,
+"initial_formatted": "$6.99",
+"final_formatted": "$3.49"
+},
+"packages": [
+823507
+],
+"package_groups": [
+{
+"name": "default",
+"title": "Buy Second Front Soundtrack",
+"description": "",
+"selection_text": "Select a purchase option",
+"save_text": "",
+"display_type": 0,
+"is_recurring_subscription": "false",
+"subs": [
+{
+"packageid": 823507,
+"percent_savings_text": "-50% ",
+"percent_savings": 0,
+"option_text": "Second Front Soundtrack - <span class=\"discount_original_price\">$6.99</span> $3.49",
+"option_description": "",
+"can_get_free_license": "0",
+"is_free_license": false,
+"price_in_cents_with_discount": 349
+}
+]
+}
+],
+"platforms": {
+"windows": true,
+"mac": true,
+"linux": true
+},
+"categories": [
+{
+"id": 50,
+"description": "Additional High-Quality Audio"
+}
+],
+"screenshots": [
+{
+"id": 0,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2295230/ss_a2ab4d41a7e32c653e4dc4063e4a0e05905fb49a.600x338.jpg?t=1675155377",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2295230/ss_a2ab4d41a7e32c653e4dc4063e4a0e05905fb49a.1920x1080.jpg?t=1675155377"
+},
+{
+"id": 1,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2295230/ss_3b5107c03ca931783bd0343ebe78b5e8bad16b04.600x338.jpg?t=1675155377",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2295230/ss_3b5107c03ca931783bd0343ebe78b5e8bad16b04.1920x1080.jpg?t=1675155377"
+},
+{
+"id": 2,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2295230/ss_c9e6ffee93ff884e414767bf14b9f71dc9f7f14c.600x338.jpg?t=1675155377",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2295230/ss_c9e6ffee93ff884e414767bf14b9f71dc9f7f14c.1920x1080.jpg?t=1675155377"
+},
+{
+"id": 3,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2295230/ss_933b1d8a93d6af9e281c718e2adf3f2041a369d4.600x338.jpg?t=1675155377",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2295230/ss_933b1d8a93d6af9e281c718e2adf3f2041a369d4.1920x1080.jpg?t=1675155377"
+},
+{
+"id": 4,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2295230/ss_5a7c17cafe7759bb8bfe6ab3ab3467f80225c331.600x338.jpg?t=1675155377",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2295230/ss_5a7c17cafe7759bb8bfe6ab3ab3467f80225c331.1920x1080.jpg?t=1675155377"
+}
+],
+"release_date": {
+"coming_soon": false,
+"date": "Jan 31, 2023"
+},
+"support_info": {
+"url": "https://www.secondfront.games/",
+"email": "contact@microprose.co.uk"
+},
+"background": "https://store.akamai.steamstatic.com/images/storepagebackground/app/2295230?t=1675155377",
+"background_raw": "https://store.akamai.steamstatic.com/images/storepagebackground/app/2295230?t=1675155377",
+"content_descriptors": {
+"ids": [],
+"notes": null
+},
+"ratings": {
+"dejus": {
+"rating_generated": "1",
+"rating": "l",
+"required_age": "0",
+"banned": "0",
+"use_age_gate": "0",
+"descriptors": ""
+}
+}
+}

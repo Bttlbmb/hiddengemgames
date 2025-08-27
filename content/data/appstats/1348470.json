@@ -1,0 +1,159 @@
+{
+"type": "dlc",
+"name": "Onigiri Premium Support Pack",
+"steam_appid": 1348470,
+"required_age": 0,
+"is_free": false,
+"detailed_description": "A deluxe support item pack for your Onigiri adventure! Get useful items at a discount and a limited accessory!<br />\r\n<br />\r\nContents<br />\r\n- Onigiri Coins: 500OC<br />\r\n- Soul Egg x50<br />\r\n- Gold Kompeitou x50<br />\r\n- EXP Boost +300%  (60Min.) x3<br />\r\n- Ryou Boost +300% (60Min.) x3<br />\r\n- Drop Boost +300% (60Min.) x3<br />\r\n- Smelting Amulet Transcendent Fortune x3<br />\r\n- Oranmentation Amulet Transcendent Fortune x3<br />\r\n- Gacha Ticket x10<br />\r\n- Character Exchange Ticket  -Premium Support Pack- x1<br />\r\n- Accessory Jounin's Wrap Hiei x1<br />\r\n<br />\r\nOnly one pack may be purchased per account.<br />\r\nOnigiri Coins are required to obtain certain in-game contents.<br />\r\n<br />\r\nUsing the Vanguard Basket -Premium Support Pack- will grant a Summoner's Scroll for one of the following characters of your choice:<br />\r\n<br />\r\nMiyamoto Musashi<br />\r\nDark Miyamoto Musashi<br />\r\nSarutobi Sasuke<br />\r\nHimiko<br />\r\nIzuna Tri-Tail<br />\r\nSakata Kintoki<br />\r\nShuten-Douji<br />\r\nOda Nobunaga<br />\r\nLancelot<br />\r\nUesugi Kenshin<br />\r\nTakeda Shingen<br />\r\nGawain<br />\r\nToyotomi Hideyoshi<br />\r\nShibata Katsuie<br />\r\nKoujirou (Flying Swallow)<br />\r\nOno no Komachi<br />\r\nTristan<br />\r\nSanzou<br />\r\nAndroid Six<br />\r\nAndroid Ninety-Nine",
+"about_the_game": "A deluxe support item pack for your Onigiri adventure! Get useful items at a discount and a limited accessory!<br />\r\n<br />\r\nContents<br />\r\n- Onigiri Coins: 500OC<br />\r\n- Soul Egg x50<br />\r\n- Gold Kompeitou x50<br />\r\n- EXP Boost +300%  (60Min.) x3<br />\r\n- Ryou Boost +300% (60Min.) x3<br />\r\n- Drop Boost +300% (60Min.) x3<br />\r\n- Smelting Amulet Transcendent Fortune x3<br />\r\n- Oranmentation Amulet Transcendent Fortune x3<br />\r\n- Gacha Ticket x10<br />\r\n- Character Exchange Ticket  -Premium Support Pack- x1<br />\r\n- Accessory Jounin's Wrap Hiei x1<br />\r\n<br />\r\nOnly one pack may be purchased per account.<br />\r\nOnigiri Coins are required to obtain certain in-game contents.<br />\r\n<br />\r\nUsing the Vanguard Basket -Premium Support Pack- will grant a Summoner's Scroll for one of the following characters of your choice:<br />\r\n<br />\r\nMiyamoto Musashi<br />\r\nDark Miyamoto Musashi<br />\r\nSarutobi Sasuke<br />\r\nHimiko<br />\r\nIzuna Tri-Tail<br />\r\nSakata Kintoki<br />\r\nShuten-Douji<br />\r\nOda Nobunaga<br />\r\nLancelot<br />\r\nUesugi Kenshin<br />\r\nTakeda Shingen<br />\r\nGawain<br />\r\nToyotomi Hideyoshi<br />\r\nShibata Katsuie<br />\r\nKoujirou (Flying Swallow)<br />\r\nOno no Komachi<br />\r\nTristan<br />\r\nSanzou<br />\r\nAndroid Six<br />\r\nAndroid Ninety-Nine",
+"short_description": "A luxurious item support pack for your adventure in the free-to-play MMO RPG Onigiri! Item pack includes many rare items, a limited Accessory, and a support character of your choice!",
+"fullgame": {
+"appid": "290470",
+"name": "Onigiri"
+},
+"supported_languages": "English, Japanese, Traditional Chinese",
+"header_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1348470/header.jpg?t=1594632782",
+"capsule_image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1348470/capsule_231x87.jpg?t=1594632782",
+"capsule_imagev5": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1348470/capsule_184x69.jpg?t=1594632782",
+"website": "https://crossplay.onigiri.cyberstep.com/",
+"pc_requirements": {
+"minimum": "<strong>Minimum:</strong><br><ul class=\"bb_ul\"><li><strong>OS *:</strong> Windows 7 / 10 32bit・64bit<br></li><li><strong>Processor:</strong> Intel Core 2 Duo E6300<br></li><li><strong>Memory:</strong> 2 GB RAM<br></li><li><strong>Graphics:</strong> NVIDIA GeForce 7800GT, AMD RADEON HD2900XT<br></li><li><strong>DirectX:</strong> Version 9.0c<br></li><li><strong>Network:</strong> Broadband Internet connection<br></li><li><strong>Storage:</strong> 10 GB available space<br></li><li><strong>Sound Card:</strong> DirectX Compatible Sound Card (DirectX 9.0c and above)</li></ul>"
+},
+"mac_requirements": [],
+"linux_requirements": [],
+"legal_notice": "©2019 CyberStep, Inc.",
+"developers": [
+"CyberStep, Inc."
+],
+"publishers": [
+"CyberStep, Inc."
+],
+"price_overview": {
+"currency": "USD",
+"initial": 4999,
+"final": 4999,
+"discount_percent": 0,
+"initial_formatted": "",
+"final_formatted": "$49.99"
+},
+"packages": [
+471575
+],
+"package_groups": [
+{
+"name": "default",
+"title": "Buy Onigiri Premium Support Pack",
+"description": "",
+"selection_text": "Select a purchase option",
+"save_text": "",
+"display_type": 0,
+"is_recurring_subscription": "false",
+"subs": [
+{
+"packageid": 471575,
+"percent_savings_text": " ",
+"percent_savings": 0,
+"option_text": "Onigiri Premium Support Pack - $49.99",
+"option_description": "",
+"can_get_free_license": "0",
+"is_free_license": false,
+"price_in_cents_with_discount": 4999
+}
+]
+}
+],
+"platforms": {
+"windows": true,
+"mac": false,
+"linux": false
+},
+"categories": [
+{
+"id": 1,
+"description": "Multi-player"
+},
+{
+"id": 20,
+"description": "MMO"
+},
+{
+"id": 21,
+"description": "Downloadable Content"
+},
+{
+"id": 35,
+"description": "In-App Purchases"
+},
+{
+"id": 18,
+"description": "Partial Controller Support"
+}
+],
+"genres": [
+{
+"id": "1",
+"description": "Action"
+},
+{
+"id": "37",
+"description": "Free To Play"
+},
+{
+"id": "29",
+"description": "Massively Multiplayer"
+},
+{
+"id": "3",
+"description": "RPG"
+}
+],
+"screenshots": [
+{
+"id": 0,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1348470/ss_68b96ee7ed11ee6bf8ab11c8b5cb8edf2f05cc55.600x338.jpg?t=1594632782",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1348470/ss_68b96ee7ed11ee6bf8ab11c8b5cb8edf2f05cc55.1920x1080.jpg?t=1594632782"
+},
+{
+"id": 1,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1348470/ss_2ea9df622e3ec010637667cb86e67ba9264f7d0f.600x338.jpg?t=1594632782",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1348470/ss_2ea9df622e3ec010637667cb86e67ba9264f7d0f.1920x1080.jpg?t=1594632782"
+},
+{
+"id": 2,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1348470/ss_6ae442f141bf5507d966c843299529e311fed8e0.600x338.jpg?t=1594632782",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1348470/ss_6ae442f141bf5507d966c843299529e311fed8e0.1920x1080.jpg?t=1594632782"
+},
+{
+"id": 3,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1348470/ss_efe4599a38ff70624c9a7fbb98a3ed0657bda4c4.600x338.jpg?t=1594632782",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1348470/ss_efe4599a38ff70624c9a7fbb98a3ed0657bda4c4.1920x1080.jpg?t=1594632782"
+},
+{
+"id": 4,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1348470/ss_43e56c98bd1ed77dc00cfd9b247bd8457fccef42.600x338.jpg?t=1594632782",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1348470/ss_43e56c98bd1ed77dc00cfd9b247bd8457fccef42.1920x1080.jpg?t=1594632782"
+},
+{
+"id": 5,
+"path_thumbnail": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1348470/ss_6a255dd2e538f6f561bfae8556e544d5964b9b54.600x338.jpg?t=1594632782",
+"path_full": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1348470/ss_6a255dd2e538f6f561bfae8556e544d5964b9b54.1920x1080.jpg?t=1594632782"
+}
+],
+"release_date": {
+"coming_soon": false,
+"date": "Jul 13, 2020"
+},
+"support_info": {
+"url": "https://crossplay.onigiri.cyberstep.com/contact?device=steam",
+"email": ""
+},
+"background": "https://store.akamai.steamstatic.com/images/storepagebackground/app/1348470?t=1594632782",
+"background_raw": "https://store.akamai.steamstatic.com/images/storepagebackground/app/1348470?t=1594632782",
+"content_descriptors": {
+"ids": [
+5
+],
+"notes": "note: Includes violent expressions and highly exposed clothing."
+},
+"ratings": null
+}
