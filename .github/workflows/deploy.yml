@@ -36,7 +36,7 @@ jobs:
       HGG_MAX_REQ_PER_MIN: "12"    # stay well under any burst limits
       HGG_HARVEST_CHUNK:   "50"    # process a small slice each run
       HGG_POOL_SAMPLE_CAP: "300"   # sample this many appids before chunking
-      HGG_POOL_SUMMARY_CAP:"120"   # hard cap on review-summaries per run
+      HGG_POOL_SUMMARY_CAP: "120"   # hard cap on review-summaries per run
       HGG_STEAM_RETRIES:   "3"     # 429/5xx retries
       HGG_STEAM_PAUSE:     "0.3"   # small pause after successful request
       HGG_DETAILS_TTL:     "604800" # 7 days cache for appdetails
