@@ -171,11 +171,24 @@ def run_daily() -> None:
     Daily: pick ONE id from the cached pool, fetch details once, write the post.
     Keeps Steam traffic extremely low.
     """
+    # Try to load the candidate pool
     pool = storage.load_candidate_pool(default={})
-    if not pool:
-        raise RuntimeError("No candidate pool found. Run with --harvest first.")
 
-    # Avoid short-term repeats
+    # Self-heal: if missing (fresh runner / previous job failed), run a quick harvest first
+    if not pool:
+        print("[daily] No candidate pool found — running a quick harvest…")
+        run_harvest(
+            min_reviews=80,
+            block_nsfw=True,
+            max_apps_to_check=1500,
+            batch_size=20,
+            wait_s=2.0,
+        )
+        pool = storage.load_candidate_pool(default={})
+        if not pool:
+            raise RuntimeError("No candidate pool found after quick harvest.")
+
+    # Avoid short-term repeats (keep a small sliding window of recently used ids)
     seen_path = storage.DATA_DIR / "seen_daily.json"
     try:
         seen_json = json.loads(seen_path.read_text(encoding="utf-8"))
@@ -183,14 +196,14 @@ def run_daily() -> None:
     except Exception:
         seen = set()
 
-    # pick one appid (note: returns INT)
+    # pick an id (use exclude=… now)
     appid = steam.pick_from_pool(pool, exclude=seen, use_weights=True)
 
     # fetch details exactly once (retry with one backup pick on failure)
     data = steam.get_appdetails(appid)
     if not data:
         print(f"[daily] first pick failed to fetch details (appid={appid}), trying a backup…")
-        appid2 = steam.pick_from_pool(pool, seen=seen | {appid}, use_weights=True)
+        appid2 = steam.pick_from_pool(pool, exclude=seen | {appid}, use_weights=True)
         data = steam.get_appdetails(appid2)
         if not data:
             raise RuntimeError("Could not fetch appdetails for the picked ids.")
@@ -198,7 +211,7 @@ def run_daily() -> None:
 
     _write_post_from_appdetails(appid, data)
 
-    # update short-term seen window
+    # update short-term seen window (retain only the most recent 50)
     try:
         recent = list(seen)
         recent.append(appid)
@@ -206,6 +219,7 @@ def run_daily() -> None:
         seen_path.write_text(json.dumps({"ids": recent}, indent=2), encoding="utf-8")
     except Exception:
         pass
+
 
 
 # -----------------------------
