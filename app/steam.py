@@ -7,18 +7,14 @@ Public API (used by app/main.py):
 - get_appdetails(appid)                 # cached
 - get_review_summary_safe(appid)        # cached
 - get_review_snippets_safe(appid, max_items=20)
-- build_candidate_pool(apps, min_reviews=30, block_nsfw=True, cap=None)
+- build_candidate_pool(apps, min_reviews=30, block_nsfw=True, cap=None, sample_size=None, batch_size=None, wait_s=None)
 - pick_from_pool(pool)
 
 Strategy:
 - Two-phase harvest: details -> quick filters -> review summary
 - On-disk caching to avoid repeat hits (content/data/appstats, content/data/reviewsum)
 - Strict per-minute rate gate + small per-run chunks to avoid 429s
-- Retry & backoff for 429/5xx
 """
-
-from __future__ import annotations
-
 import os
 import json
 import time
@@ -33,243 +29,243 @@ import requests
 # ---------- Config / knobs ----------
 
 SESSION = requests.Session()
-SESSION.headers.update({"User-Agent": "HiddenGemGamesBot/1.0 (+github actions)"})
+SESSION.headers.update({"User-Agent": "HiddenGemGames/1.0 (+https://example.com)"})
 
-TIMEOUT = float(os.environ.get("HGG_STEAM_TIMEOUT", "20"))
-RETRIES = int(os.environ.get("HGG_STEAM_RETRIES", "3"))            # includes 429-aware retry
-PAUSE   = float(os.environ.get("HGG_STEAM_PAUSE", "0.25"))         # small delay after successful call
+DATA_DIR = Path("content/data")
+APPSTATS_DIR = DATA_DIR / "appstats"
+REVIEWSUM_DIR = DATA_DIR / "reviewsum"
 
-# How many appids we sample *before* chunking
-POOL_SAMPLE_CAP   = int(os.environ.get("HGG_POOL_SAMPLE_CAP", "600"))
-# How many review summaries we fetch per run (upper bound)
-POOL_SUMMARY_CAP  = int(os.environ.get("HGG_POOL_SUMMARY_CAP", "220"))
-# How many review snippets to pull for LLM context when needed
-REVIEWS_SNIPPET_CAP = int(os.environ.get("HGG_REVIEWS_SNIPPET_CAP", "20"))
-
-# Process only a small slice per harvest run (keeps bursts tiny; cache builds over runs)
-HARVEST_CHUNK = int(os.environ.get("HGG_HARVEST_CHUNK", "60"))
-
-# Cache freshness (seconds)
-DETAILS_TTL = int(os.environ.get("HGG_DETAILS_TTL", str(7 * 24 * 3600)))   # 7 days
-SUMMARY_TTL = int(os.environ.get("HGG_SUMMARY_TTL", str(7 * 24 * 3600)))   # 7 days
-
-# Per-minute global budget to stay comfortably under Steam limits
-MAX_REQ_PER_MIN = int(os.environ.get("HGG_MAX_REQ_PER_MIN", "15"))
-
-# Cache dirs
-APPSTATS_DIR  = Path("content/data/appstats")
-REVIEWSUM_DIR = Path("content/data/reviewsum")
 APPSTATS_DIR.mkdir(parents=True, exist_ok=True)
 REVIEWSUM_DIR.mkdir(parents=True, exist_ok=True)
 
+# Sample sizes / pacing
+POOL_SAMPLE_CAP = 10_000           # max apps to sample from applist before phase filters
+POOL_SUMMARY_CAP = 1200            # max review summaries to check per run (phase 2)
+HARVEST_CHUNK   = 400              # safety slice per run after sampling
+PAUSE           = 0.15             # tiny pause after individual requests
+
+# Rate limiting (per-minute gate for steam endpoints we hit frequently)
+REQS_PER_MIN = 60
+_REQ_TIMES: deque[float] = deque(maxlen=REQS_PER_MIN)
+
 rng = SystemRandom()
 
-# ---------- Rate limiting / HTTP helpers ----------
-
-# Sliding window of recent request timestamps
-_REQ_TIMES = deque(maxlen=MAX_REQ_PER_MIN * 2)
 
 def _rate_gate():
-    """
-    Blocks if we've made >= MAX_REQ_PER_MIN requests in the last 60 seconds.
-    Keeps us well below Steam's burst limits.
-    """
+    """Very simple per-minute request gate."""
     now = time.time()
-    while _REQ_TIMES and (now - _REQ_TIMES[0]) > 60:
-        _REQ_TIMES.popleft()
-
-    if len(_REQ_TIMES) >= MAX_REQ_PER_MIN:
-        sleep_for = 60 - (now - _REQ_TIMES[0]) + 0.05
-        if sleep_for > 0:
+    _REQ_TIMES.append(now)
+    if len(_REQ_TIMES) == _REQ_TIMES.maxlen:
+        # enforce that the first of the last N requests was >= 60s ago
+        earliest = _REQ_TIMES[0]
+        delta = now - earliest
+        if delta < 60.0:
+            sleep_for = 60.0 - delta
+            # nudge a bit to avoid nudging right into boundary
+            sleep_for = max(0.0, sleep_for) + 0.05
             time.sleep(sleep_for)
 
-    _REQ_TIMES.append(time.time())
+    # also a tiny random pause to de-sync with other runs
+    time.sleep(PAUSE)
 
-def _should_retry(status: int) -> bool:
-    # Retry for 429 and transient 5xx
-    return status == 429 or 500 <= status < 600
 
-def _get(url: str, *, params: Optional[dict] = None) -> requests.Response:
-    last_exc = None
-    for attempt in range(RETRIES + 1):
+def _get(url: str, params: Optional[dict] = None, retries: int = 3, backoff: float = 0.7) -> Optional[dict]:
+    """HTTP GET with small retry and our gate."""
+    attempt = 0
+    exc: Optional[Exception] = None
+    while attempt <= retries:
         try:
-            _rate_gate()  # enforce per-minute budget
-            r = SESSION.get(url, params=params, timeout=TIMEOUT)
-
-            if _should_retry(r.status_code):
-                # backoff with jitter to be polite
+            _rate_gate()
+            res = SESSION.get(url, params=params, timeout=30)
+            if res.status_code == 200:
+                try:
+                    return res.json()
+                finally:
+                    # tiny pause after success
+                    time.sleep(PAUSE)
+            # 429/5xx: back off
+            if res.status_code in (429, 500, 502, 503, 504):
+                attempt += 1
                 sleep = 0.8 + attempt * 0.7 + random.random() * 0.3
                 time.sleep(sleep)
-                last_exc = requests.HTTPError(f"{r.status_code} {r.reason}")
             else:
-                r.raise_for_status()
-                # tiny pause after success
-                time.sleep(PAUSE)
-                return r
-        except requests.RequestException as e:
-            last_exc = e
+                return None
+        except Exception as e:  # network, JSON, etc.
+            exc = e
+            attempt += 1
             sleep = 0.6 + attempt * 0.5
             time.sleep(sleep)
-    raise last_exc or RuntimeError("Steam request failed")
-
-
-# ---------- Cache helpers ----------
-
-def _cache_load(path: Path, ttl: int) -> Optional[dict]:
-    try:
-        if path.exists():
-            age = time.time() - path.stat().st_mtime
-            if age <= ttl:
-                return json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
-        pass
+    # give up
     return None
 
-def _cache_save(path: Path, obj: dict) -> None:
+
+# ---------- Caching helpers ----------
+
+def _read_json(path: Path) -> Optional[dict]:
     try:
-        path.write_text(json.dumps(obj, ensure_ascii=False, indent=0), encoding="utf-8")
+        with path.open("r", encoding="utf-8") as f:
+            return json.load(f)
     except Exception:
-        pass
+        return None
 
 
-# ---------- Core fetchers (cached) ----------
+def _write_json(path: Path, obj: dict) -> None:
+    tmp = path.with_suffix(".tmp")
+    with tmp.open("w", encoding="utf-8") as f:
+        json.dump(obj, f, separators=(",", ":"), ensure_ascii=False)
+    tmp.replace(path)
+
+
+# ---------- Public: applist ----------
 
 def get_applist() -> List[Dict[str, Any]]:
-    """Full Steam applist (cache for a day)."""
-    cache_path = Path("content/data/applist.json")
-    cached = _cache_load(cache_path, ttl=24 * 3600)
-    if cached and isinstance(cached, list):
-        return cached
-    r = _get("https://api.steampowered.com/ISteamApps/GetAppList/v2")
-    apps = r.json().get("applist", {}).get("apps", []) or []
-    _cache_save(cache_path, apps)
+    """Fetch the full Steam applist (id + name). Cached on disk."""
+    path = DATA_DIR / "applist.json"
+    cached = _read_json(path)
+    if isinstance(cached, list) and cached:
+        return cached  # already a list of dicts
+
+    url = "https://api.steampowered.com/ISteamApps/GetAppList/v2/"
+    data = _get(url)
+    apps = (data or {}).get("applist", {}).get("apps", [])
+    if isinstance(apps, list) and apps:
+        _write_json(path, apps)
     return apps
 
-def get_appdetails(appid: int) -> Optional[Dict[str, Any]]:
-    """Cached appdetails from store.steampowered.com/api/appdetails."""
-    p = APPSTATS_DIR / f"{appid}.json"
-    cached = _cache_load(p, ttl=DETAILS_TTL)
+
+# ---------- Public: appdetails (cached) ----------
+
+def _appstats_path(appid: int) -> Path:
+    return APPSTATS_DIR / f"{appid}.json"
+
+
+def get_appdetails(appid: int) -> Optional[dict]:
+    """Steam appdetails with aggressive on-disk caching."""
+    path = _appstats_path(appid)
+    cached = _read_json(path)
     if cached is not None:
         return cached
 
+    url = "https://store.steampowered.com/api/appdetails"
+    data = _get(url, params={"appids": appid})
+    # Store raw; callers know how to navigate
+    if data is not None:
+        _write_json(path, data)
+    return data
+
+
+# ---------- Public: review summary + snippets (cached) ----------
+
+def _reviewsum_path(appid: int) -> Path:
+    return REVIEWSUM_DIR / f"{appid}.json"
+
+
+def get_review_summary_safe(appid: int) -> Optional[dict]:
+    """
+    Returns Steam review summary (lifetime recent, counts) or None on error.
+    Cached to disk.
+    """
+    path = _reviewsum_path(appid)
+    cached = _read_json(path)
+    if cached is not None:
+        return cached
+
+    url = "https://store.steampowered.com/appreviews/{appid}"
+    params = {
+        "json": 1,
+        "filter": "summary",
+        "language": "all",
+        "purchase_type": "all",
+        "day_range": 3650,  # lifetime-ish
+    }
+    data = _get(url.format(appid=appid), params=params)
+    if data is not None:
+        _write_json(path, data)
+    return data
+
+
+def get_review_snippets_safe(appid: int, max_items: int = 20) -> List[str]:
+    """
+    Fetch a few review snippets (recent) for a title. Best-effort.
+    We keep this small; it’s mostly for UI flavor text / sanity checks.
+    """
+    url = "https://store.steampowered.com/appreviews/{appid}"
+    params = {
+        "json": 1,
+        "filter": "recent",
+        "language": "english",
+        "purchase_type": "all",
+        "num_per_page": min(100, max(10, int(max_items))),
+    }
+    data = _get(url.format(appid=appid), params=params)
+    out: List[str] = []
     try:
-        r = _get("https://store.steampowered.com/api/appdetails", params={"appids": appid})
-        j = r.json()
-        item = j.get(str(appid)) or {}
-        if item.get("success"):
-            data = item.get("data") or {}
-            _cache_save(p, data)
-            return data
+        for r in (data or {}).get("reviews", [])[:max_items]:
+            s = (r.get("review") or "").strip()
+            if s:
+                out.append(s)
     except Exception:
         pass
-    return None
+    return out
 
-def get_review_summary_safe(appid: int) -> Dict[str, Any]:
-    """Cached review summary; returns {} on failure."""
-    p = REVIEWSUM_DIR / f"{appid}.json"
-    cached = _cache_load(p, ttl=SUMMARY_TTL)
-    if cached is not None:
-        return cached
+
+# ---------- Quick filters & thresholds ----------
+
+def _unwrap_details(data: dict) -> Tuple[bool, dict]:
+    """
+    appdetails returns {"<appid>": {"success": true, "data": {...}}}
+    Return (ok, payload)
+    """
     try:
-        r = _get(
-            f"https://store.steampowered.com/appreviews/{appid}",
-            params={
-                "json": 1,
-                "language": "english",
-                "purchase_type": "all",
-                "filter": "summary",
-                "num_per_page": 1,
-            },
-        )
-        data = (r.json() or {}).get("query_summary", {}) or {}
-        _cache_save(p, data)
-        return data
+        key = next(iter(data.keys()))
+        entry = data[key]
+        return bool(entry.get("success")), (entry.get("data") or {})
     except Exception:
-        return {}
-
-def get_review_snippets_safe(appid: int, max_items: int = REVIEWS_SNIPPET_CAP) -> List[str]:
-    """Small set of review snippets (non-cached; optional for LLM context)."""
-    try:
-        r = _get(
-            f"https://store.steampowered.com/appreviews/{appid}",
-            params={
-                "json": 1,
-                "language": "english",
-                "purchase_type": "all",
-                "filter": "recent",
-                "num_per_page": max(5, min(max_items, 40)),
-            },
-        )
-        j = r.json() or {}
-        revs = j.get("reviews") or []
-        out: List[str] = []
-        for rv in revs:
-            txt = (rv.get("review") or "").strip()
-            if txt:
-                out.append(txt)
-            if len(out) >= max_items:
-                break
-        return out
-    except Exception:
-        return []
+        return False, {}
 
 
-# ---------- Filtering helpers ----------
+def _is_viable_game(payload: dict) -> bool:
+    """Rough filters to avoid tools, videos, DLC-only, etc."""
+    t = (payload.get("type") or "").lower()
+    genres = [g.get("description", "").lower() for g in payload.get("genres", []) if isinstance(g, dict)]
+    categories = [c.get("description", "").lower() for c in payload.get("categories", []) if isinstance(c, dict)]
 
-_NSFW_HINTS = ("adult", "sexual", "nudity", "nsfw")
-
-def _to_int(x, default=0):
-    try:
-        return int(x)
-    except Exception:
-        return default
-
-def _is_nsfw(data: Dict[str, Any]) -> bool:
-    """Heuristics for adult/NSFW content; robust to str/None values from Steam."""
-    if not data:
+    if t not in ("game", "dlc"):
         return False
-
-    # required_age may be "18", 18, or None
-    if _to_int(data.get("required_age"), 0) >= 18:
-        return True
-
-    # content_descriptors: ids + notes
-    cd = (data.get("content_descriptors") or {})
-    notes = (cd.get("notes") or "")
-    if isinstance(notes, str) and any(k in notes.lower() for k in _NSFW_HINTS):
-        return True
-
-    ids = cd.get("ids") or []
-    try:
-        id_ints = {_to_int(i) for i in ids}
-    except Exception:
-        id_ints = set()
-    # Steam often uses 1–4 for adult content flags
-    if any(i in id_ints for i in (1, 2, 3, 4)):
-        return True
-
-    acd = (data.get("adult_content_description") or "")
-    if isinstance(acd, str) and any(k in acd.lower() for k in _NSFW_HINTS):
-        return True
-
-    return False
-
-def _is_viable_game(data: Dict[str, Any]) -> bool:
-    if not data:
+    bad_genres = {"accounting", "video production", "tutorial", "software"}
+    if any(g in bad_genres for g in genres):
         return False
-    if data.get("type") != "game":
-        return False
-    rd = data.get("release_date") or {}
-    if rd.get("coming_soon"):
-        return False
-    if not data.get("name") or not data.get("header_image"):
+    bad_cats = {"video", "trailer", "software training"}
+    if any(c in bad_cats for c in categories):
         return False
     return True
 
-def _passes_review_threshold_cached(appid: int, min_reviews: int) -> Tuple[bool, Dict[str, Any]]:
-    summary = get_review_summary_safe(appid)
-    total = _to_int(summary.get("total_reviews"), 0)
-    return (total >= min_reviews), summary
+
+def _is_nsfw(payload: dict) -> bool:
+    """Basic NSFW detection based on Steam flags/genres/categories."""
+    flags = set(map(str.lower, payload.get("content_descriptors", {}).get("ids", [])))
+    # also look at genres/categories text
+    text = " ".join([
+        " ".join([g.get("description", "") for g in payload.get("genres", []) if isinstance(g, dict)]),
+        " ".join([c.get("description", "") for c in payload.get("categories", []) if isinstance(c, dict)]),
+    ]).lower()
+
+    nsfw_words = ("adult", "sexual", "nudity", "nsfw")
+    if any(w in text for w in nsfw_words):
+        return True
+    if "2" in flags:  # Steam sometimes marks mature content with small ints
+        return True
+    return False
+
+
+def _passes_review_threshold_cached(appid: int, min_reviews: int) -> Tuple[bool, Optional[dict]]:
+    """Return (passes, payload) for the summary threshold."""
+    data = get_review_summary_safe(appid)
+    try:
+        total = int((data or {}).get("query_summary", {}).get("total_reviews", 0))
+    except Exception:
+        total = 0
+    return (total >= min_reviews), data
 
 
 # ---------- Candidate pool (weekly) ----------
@@ -280,6 +276,9 @@ def build_candidate_pool(
     min_reviews: int = 30,
     block_nsfw: bool = True,
     cap: Optional[int] = None,
+    sample_size: Optional[int] = None,
+    batch_size: Optional[int] = None,
+    wait_s: Optional[float] = None,
 ) -> List[int]:
     """
     Build a list of promising appids using a sampled subset of the applist.
@@ -291,10 +290,13 @@ def build_candidate_pool(
     if not apps:
         return []
 
-    cap = int(cap or POOL_SAMPLE_CAP)
-    sample = random.sample(apps, k=min(cap, len(apps)))
+    # Back-compat: prefer `sample_size` over legacy `cap` when provided
+    effective_cap = sample_size if (sample_size is not None) else cap
+    cap_val = int(effective_cap or POOL_SAMPLE_CAP)
+    sample = random.sample(apps, k=min(cap_val, len(apps)))
     # Only process a small chunk per run to avoid bursts & let cache accumulate.
-    sample = sample[:min(HARVEST_CHUNK, len(sample))]
+    chunk = int(batch_size or HARVEST_CHUNK)
+    sample = sample[:min(chunk, len(sample))]
 
     pool: List[int] = []
     checked_summaries = 0
@@ -323,7 +325,7 @@ def build_candidate_pool(
 
         # Gentle pacing every N items
         if idx % 40 == 0:
-            time.sleep(0.8)
+            time.sleep(float(wait_s) if (wait_s is not None) else 0.8)
 
     random.shuffle(pool)
     return pool
@@ -331,23 +333,16 @@ def build_candidate_pool(
 
 # ---------- Daily picker ----------
 
-def _normalize_pool_to_appids(pool) -> list[int]:
+def _normalize_pool_to_appids(pool) -> List[int]:
     """
     Accepts:
-      - dict with 'candidates' / 'apps' / 'ids' / 'pool'
-      - list of appids
-      - list of dicts containing 'appid' or 'id'
-    Returns a clean list[int] of appids (duplicates removed, invalid skipped).
+      - list[int] of appids,
+      - list[dict] with 'appid' or 'id'
+      - dict with 'items': [...]
+    Returns: list[int]
     """
-    items = []
     if isinstance(pool, dict):
-        items = (
-            pool.get("candidates")
-            or pool.get("apps")
-            or pool.get("ids")
-            or pool.get("pool")
-            or []
-        )
+        items = pool.get("items") or []
     elif isinstance(pool, list):
         items = pool
     else:
@@ -370,36 +365,46 @@ def _normalize_pool_to_appids(pool) -> list[int]:
     return appids
 
 
-def pick_from_pool(pool, seen: set[int] | None = None, use_weights: bool = True) -> int:
+def _weight_for_app(appid: int) -> float:
     """
-    Pick one appid from a cached candidate pool.
-    - `pool` may be dict/list; we normalize it.
-    - `seen` can exclude recent picks.
-    - If `use_weights` and items are dicts with `gemscore`, bias toward higher score.
+    Optionally derive a weight from cached review stats (more reviews => slightly lower weight
+    to bias toward smaller-but-viable titles). If we don't have data, return a small default.
     """
-    seen = seen or set()
+    data = get_review_summary_safe(appid) or {}
+    try:
+        total = int((data.get("query_summary") or {}).get("total_reviews", 0))
+    except Exception:
+        total = 0
+    if total <= 0:
+        return 1.0
+    # simple inverse square root scaling
+    return max(0.01, 1.0 / (total ** 0.5))
 
-    # If pool is dict-of-dicts and you want weighting, extract scores in parallel
-    weight_map: dict[int, float] = {}
-    if isinstance(pool, dict):
-        raw_items = (
-            pool.get("candidates")
-            or pool.get("apps")
-            or pool.get("ids")
-            or pool.get("pool")
-            or []
-        )
-        for it in raw_items:
-            if isinstance(it, dict):
-                raw = it.get("appid", it.get("id"))
-                try:
-                    aid = int(raw)
-                except (TypeError, ValueError):
-                    continue
-                if "gemscore" in it:
-                    # tiny floor to keep non-zero probability
-                    weight_map[aid] = max(float(it.get("gemscore", 0.0)), 0.01)
 
+def pick_from_pool(
+    pool,
+    *,
+    use_weights: bool = True,
+    exclude: Optional[List[int]] = None,
+) -> int:
+    """
+    Pick an appid from a harvested pool (daily choice).
+    - pool can be a list[int], list[dict], or a dict with items:[]
+    - optionally exclude a few already-used ids
+    - weighted toward smaller-but-viable titles if use_weights=True
+    """
+    exclude = set(exclude or [])
+    weight_map = {}
+
+    if use_weights:
+        # Try to compute weights for many items, but keep it cheap
+        for aid in _normalize_pool_to_appids(pool)[:500]:
+            if aid in exclude:
+                continue
+            weight_map[aid] = _weight_for_app(aid)
+
+    # Normalize and drop excluded
+    seen = set(exclude)
     appids = [aid for aid in _normalize_pool_to_appids(pool) if aid not in seen]
     if not appids:
         raise ValueError("Candidate pool empty after normalization (or all excluded by 'seen').")
@@ -413,4 +418,3 @@ def pick_from_pool(pool, seen: set[int] | None = None, use_weights: bool = True)
 
     # Fallback: uniform
     return rng.choice(appids)
-
